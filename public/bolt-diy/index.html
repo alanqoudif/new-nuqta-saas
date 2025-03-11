@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منشئ مواقع نقطة للذكاء الاصطناعي</title>
+  <meta name="description" content="منشئ مواقع نقطة للذكاء الاصطناعي - إنشاء مواقع ويب مذهلة باستخدام الذكاء الاصطناعي">
+  <meta name="theme-color" content="#111827">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #111827;
+      color: #f9fafb;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      direction: rtl;
+    }
+    .container {
+      max-width: 800px;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(to right, #4f46e5, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    p {
+      font-size: 1.25rem;
+      color: #9ca3af;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 2rem;
+    }
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(79, 70, 229, 0.3);
+      border-radius: 50%;
+      border-top-color: #4f46e5;
+      animation: spin 1s ease-in-out infinite;
+      margin-bottom: 1rem;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .card {
+      background-color: #1f2937;
+      border-radius: 0.75rem;
+      padding: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      border: 1px solid #374151;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>منشئ مواقع نقطة للذكاء الاصطناعي</h1>
+      <p>نقوم بتجهيز البيئة لتتمكن من إنشاء مواقع ويب مذهلة باستخدام الذكاء الاصطناعي.</p>
+      
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>جاري تحميل المحرر...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // محاكاة التحميل
+    setTimeout(() => {
+      // في بيئة حقيقية، سيتم هنا تحميل bolt.diy
+      // حاليًا، نعرض فقط رسالة
+      document.querySelector('.loading').innerHTML = `
+        <p style="color: #ec4899;">المحرر غير متاح حاليًا. يرجى تشغيل سكريبت setup-bolt-diy.js لإعداده.</p>
+      `;
+    }, 3000);
+  </script>
+</body>
+</html> 

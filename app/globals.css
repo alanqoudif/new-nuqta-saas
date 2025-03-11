@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* RTL Support */
+body {
+  direction: rtl;
+  text-align: right;
+}
+
+:root {
+  --primary-color: 99 102 241;
+  --secondary-color: 139 92 246;
+  --accent-color: 236 72 153;
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 10, 10, 20;
+  
+  /* Colores de Nuqta AI */
+  --success-color: 16, 185, 129; /* Verde */
+  --warning-color: 245, 158, 11; /* Ámbar */
+  --error-color: 239, 68, 68; /* Rojo */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: 99 102 241;
+    --secondary-color: 139 92 246;
+    --accent-color: 236 72 153;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 10, 10, 20;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+/* Estilos personalizados */
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 animate-gradient bg-[length:200%_200%];
+  }
+  
+  .gradient-border {
+    @apply border border-transparent bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 animate-gradient bg-[length:200%_200%];
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500 animate-gradient bg-[length:200%_200%];
+  }
+  
+  .card {
+    @apply bg-gray-900 rounded-xl shadow-xl border border-gray-800 p-6 transition-all duration-300 hover:shadow-2xl hover:scale-105;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-800 text-white hover:bg-gray-700 active:bg-gray-600;
+  }
+  
+  .btn-outline {
+    @apply bg-transparent border border-gray-700 text-white hover:bg-gray-800 active:bg-gray-700;
+  }
+  
+  .input {
+    @apply bg-gray-900 border border-gray-800 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300;
+  }
+  
+  .label {
+    @apply text-gray-300 text-sm font-medium mb-1 block;
+  }
+  
+  .form-group {
+    @apply mb-4;
+  }
+  
+  .error-text {
+    @apply text-red-500 text-sm mt-1;
+  }
+  
+  .success-text {
+    @apply text-green-500 text-sm mt-1;
+  }
+  
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+  }
+  
+  .section {
+    @apply py-20;
+  }
+  
+  .glass-effect {
+    @apply bg-gray-900/70 backdrop-blur-lg;
+  }
+}
+
+/* RTL Support */
+html[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+}
+
+html[dir="rtl"] .ml-3 {
+  margin-left: 0;
+  margin-right: 0.75rem;
+}
+
+html[dir="rtl"] .mr-3 {
+  margin-right: 0;
+  margin-left: 0.75rem;
+}
+
+html[dir="rtl"] .ml-auto {
+  margin-left: 0;
+  margin-right: auto;
+}
+
+html[dir="rtl"] .mr-auto {
+  margin-right: 0;
+  margin-left: auto;
+}
+
+/* إضافة دعم RTL للأيقونات */
+html[dir="rtl"] .icon-flip {
+  transform: scaleX(-1);
+} 

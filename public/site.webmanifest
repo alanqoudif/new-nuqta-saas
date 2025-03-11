@@ -1,0 +1,25 @@
+{
+  "name": "نقطة للذكاء الاصطناعي",
+  "short_name": "نقطة",
+  "description": "منصة خدمات الذكاء الاصطناعي المتقدمة",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111827",
+  "theme_color": "#111827",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/nuqtalogo.webp",
+      "sizes": "192x192",
+      "type": "image/webp"
+    },
+    {
+      "src": "/images/nuqtalogo.webp",
+      "sizes": "512x512",
+      "type": "image/webp"
+    }
+  ],
+  "dir": "rtl",
+  "lang": "ar-SA",
+  "prefer_related_applications": false
+} 

@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# نقطة للذكاء الاصطناعي - دليل المستخدم والمطور
 
-## Getting Started
+## مقدمة
 
-First, run the development server:
+هذا المشروع هو منصة لإدارة خدمات الذكاء الاصطناعي، بما في ذلك طلبات الذكاء الاصطناعي الخاص وإدارة المستخدمين.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## متطلبات النظام
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Node.js (الإصدار 16 أو أحدث)
+- قاعدة بيانات Supabase
+- متصفح حديث
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## تثبيت وتشغيل المشروع
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. قم بتثبيت الاعتمادات:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+2. قم بتشغيل المشروع في وضع التطوير:
+   ```bash
+   npm run dev
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+3. قم بفتح المتصفح على العنوان:
+   ```
+   http://localhost:3000
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## إعداد قاعدة البيانات
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+يجب تنفيذ ملفات SQL التالية في SQL Editor في Supabase بالترتيب:
 
-## Deploy on Vercel
+1. `sql/fix_privateai_requests_table.sql` - لإصلاح جدول طلبات الذكاء الاصطناعي الخاص
+2. `sql/create_fix_schema_function.sql` - لإنشاء دالة إصلاح هيكل الجدول
+3. `sql/create_get_all_users_function.sql` - لإنشاء دالة جلب جميع المستخدمين
+4. `sql/create_privateai_request_function.sql` - لإنشاء دالة إنشاء طلب ذكاء اصطناعي خاص
+5. `sql/create_update_user_profile_function.sql` - لإنشاء دالة تحديث ملف المستخدم
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### نصائح لتنفيذ ملفات SQL
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- قم بتنفيذ كل ملف على حدة في SQL Editor
+- تأكد من تنفيذ الملفات بالترتيب المذكور أعلاه
+- إذا واجهت خطأ في تنفيذ أحد الملفات، قم بتقسيمه إلى أجزاء أصغر وتنفيذها واحداً تلو الآخر
+
+## الميزات الرئيسية
+
+1. **لوحة التحكم**: عرض معلومات المستخدم والخدمات المتاحة
+2. **طلب الذكاء الاصطناعي الخاص**: تقديم طلب للحصول على خدمة الذكاء الاصطناعي الخاص
+3. **إعدادات المستخدم**: تحديث معلومات الملف الشخصي وتغيير كلمة المرور
+4. **لوحة الإدارة**: إدارة المستخدمين وطلبات الذكاء الاصطناعي الخاص (للمسؤولين فقط)
+
+## حل المشاكل الشائعة
+
+### مشكلة: خطأ في هيكل جدول privateai_requests
+
+إذا ظهر خطأ مثل "Could not find the 'domain_of_use' column of 'privateai_requests' in the schema cache"، قم بتنفيذ ملف `sql/fix_privateai_requests_table.sql` في SQL Editor في Supabase.
+
+### مشكلة: عدم ظهور المستخدمين في لوحة الإدارة
+
+قم بتنفيذ ملف `sql/create_get_all_users_function.sql` في SQL Editor في Supabase.
+
+### مشكلة: عدم حفظ التغييرات في إعدادات المستخدم
+
+قم بتنفيذ ملف `sql/create_update_user_profile_function.sql` في SQL Editor في Supabase.
+
+### مشكلة: خطأ في تنفيذ ملفات SQL
+
+إذا واجهت خطأ مثل "syntax error at or near BEGIN"، قم بتقسيم الملف إلى أجزاء أصغر وتنفيذها واحداً تلو الآخر.
+
+## الأمان
+
+- تأكد من تعيين الصلاحيات المناسبة في Supabase
+- استخدم دائماً وظائف RPC مع SECURITY DEFINER للعمليات الحساسة
+- تحقق من صلاحيات المستخدم قبل السماح بالوصول إلى لوحة الإدارة
+
+## المساهمة
+
+نرحب بمساهماتكم! يرجى اتباع الخطوات التالية:
+
+1. قم بعمل fork للمشروع
+2. قم بإنشاء فرع جديد للميزة التي تريد إضافتها
+3. قم بإرسال طلب سحب (Pull Request)
+
+## الترخيص
+
+هذا المشروع مرخص تحت رخصة MIT.
