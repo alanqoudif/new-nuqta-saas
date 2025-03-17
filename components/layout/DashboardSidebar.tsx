@@ -7,17 +7,18 @@ import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   FiHome, 
-  FiServer, 
-  FiCode, 
-  FiMessageSquare, 
   FiSettings, 
   FiUser, 
   FiLogOut,
   FiMenu,
   FiX,
-  FiUsers
+  FiUsers,
+  FiEdit,
+  FiMonitor
 } from 'react-icons/fi';
 import { useAuth } from '@/context/AuthContext';
+import { useServices } from '@/context/ServicesContext';
+import DynamicIcon from '@/components/ui/DynamicIcon';
 
 interface SidebarLinkProps {
   href: string;
@@ -71,25 +72,40 @@ const DashboardSidebar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, signOut } = useAuth();
   const pathname = usePathname();
+  const { services, isLoading } = useServices();
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const closeSidebar = () => setIsOpen(false);
 
   const isAdmin = user?.role === 'admin';
 
+  // إنشاء روابط الخدمات ديناميكياً
+  const serviceLinks = services
+    .filter(service => service.is_active && !service.is_coming_soon)
+    .map(service => ({
+      href: service.url,
+      icon: <DynamicIcon iconName={service.icon_name} />,
+      text: service.name,
+      external: service.url.startsWith('http')
+    }));
+
+  // الروابط الثابتة للوحة التحكم
   const dashboardLinks = [
     { href: '/dashboard', icon: <FiHome />, text: 'الرئيسية' },
-    { href: '/dashboard/private-ai-request', icon: <FiServer />, text: 'الذكاء الخاص' },
-    { href: '/dashboard/site-builder', icon: <FiCode />, text: 'منشئ المواقع الذكي' },
-    { href: 'https://whats.nuqtai.com/', icon: <FiMessageSquare />, text: 'روبوت واتساب', external: true },
+    ...serviceLinks,
     { href: '/dashboard/settings', icon: <FiSettings />, text: 'الإعدادات' },
   ];
 
   const adminLinks = [
     { href: '/admin', icon: <FiUser />, text: 'لوحة الإدارة' },
     { href: '/admin/users', icon: <FiUsers />, text: 'المستخدمين' },
-    { href: '/admin/privateai-requests', icon: <FiServer />, text: 'طلبات الذكاء الخاص' },
+    { href: '/admin/services', icon: <DynamicIcon iconName="FiServer" />, text: 'إدارة الخدمات' },
+    { href: '/admin/showcase', icon: <FiMonitor />, text: 'عرض الخدمات' },
+    { href: '/admin/social-media', icon: <DynamicIcon iconName="FiShare2" />, text: 'وسائل التواصل' },
+    { href: '/admin/privateai-requests', icon: <DynamicIcon iconName="FiServer" />, text: 'طلبات الذكاء الخاص' },
     { href: '/admin/early-access-requests', icon: <FiUsers />, text: 'طلبات الوصول المبكر' },
+    { href: '/admin/contact-messages', icon: <DynamicIcon iconName="FiMessageSquare" />, text: 'رسائل التواصل' },
+    { href: '/admin/blog', icon: <FiEdit />, text: 'إدارة المدونة' },
   ];
 
   return (
@@ -130,7 +146,7 @@ const DashboardSidebar: React.FC = () => {
           <div className="p-4 border-b border-gray-800">
             <Link href="/" className="flex items-center">
               <Image 
-                src="/images/nuqtalogo.webp" 
+                src="/nuqtalogo.webp" 
                 alt="نقطة للذكاء الاصطناعي" 
                 width={30} 
                 height={30} 
@@ -142,19 +158,25 @@ const DashboardSidebar: React.FC = () => {
 
           {/* Navigation */}
           <nav className="flex-1 overflow-y-auto py-4 px-3">
-            <div className="space-y-1">
-              {dashboardLinks.map((link) => (
-                <SidebarLink
-                  key={link.href}
-                  href={link.href}
-                  icon={link.icon}
-                  text={link.text}
-                  isActive={pathname === link.href}
-                  onClick={closeSidebar}
-                  external={link.external}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="flex justify-center py-4">
+                <div className="w-6 h-6 border-2 border-t-primary-500 border-gray-700 rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {dashboardLinks.map((link) => (
+                  <SidebarLink
+                    key={link.href}
+                    href={link.href}
+                    icon={link.icon}
+                    text={link.text}
+                    isActive={pathname === link.href}
+                    onClick={closeSidebar}
+                    external={link.external}
+                  />
+                ))}
+              </div>
+            )}
 
             {isAdmin && (
               <div className="mt-8 pt-4 border-t border-gray-800">

@@ -1,11 +1,136 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { FiGithub, FiTwitter, FiLinkedin, FiMail } from 'react-icons/fi';
+import { FiGithub, FiTwitter, FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
+import { SocialMediaService, SocialMedia } from '@/lib/social-media-service';
+import * as FiIcons from 'react-icons/fi';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
+  const [socialLinks, setSocialLinks] = useState<SocialMedia[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // تحميل روابط وسائل التواصل الاجتماعي من قاعدة البيانات
+  useEffect(() => {
+    const loadSocialMedia = async () => {
+      try {
+        console.log('Footer: Loading social media links...');
+        const activeSocialMedia = await SocialMediaService.getActiveSocialMedia();
+        
+        if (activeSocialMedia && activeSocialMedia.length > 0) {
+          console.log('Footer: Social media links loaded successfully:', activeSocialMedia);
+          setSocialLinks(activeSocialMedia);
+        } else {
+          console.log('Footer: No active social media links found, using default links');
+          // استخدام روابط افتراضية في حالة عدم وجود روابط في قاعدة البيانات
+          setSocialLinks([
+            { 
+              id: '1', 
+              platform: 'GitHub', 
+              url: 'https://github.com/nuqta-ai', 
+              icon_name: 'FiGithub', 
+              is_active: true, 
+              display_order: 1,
+              created_at: '',
+              updated_at: ''
+            },
+            { 
+              id: '2', 
+              platform: 'Twitter', 
+              url: 'https://twitter.com/nuqta_ai', 
+              icon_name: 'FiTwitter', 
+              is_active: true, 
+              display_order: 2,
+              created_at: '',
+              updated_at: ''
+            },
+            { 
+              id: '3', 
+              platform: 'LinkedIn', 
+              url: 'https://linkedin.com/company/nuqtai', 
+              icon_name: 'FiLinkedin', 
+              is_active: true, 
+              display_order: 3,
+              created_at: '',
+              updated_at: ''
+            },
+            { 
+              id: '4', 
+              platform: 'Email', 
+              url: 'mailto:info@nuqtai.com', 
+              icon_name: 'FiMail', 
+              is_active: true, 
+              display_order: 4,
+              created_at: '',
+              updated_at: ''
+            }
+          ]);
+        }
+      } catch (error) {
+        console.error('Footer: Error loading social media links:', error);
+        // استخدام روابط افتراضية في حالة حدوث خطأ
+        setSocialLinks([
+          { 
+            id: '1', 
+            platform: 'GitHub', 
+            url: 'https://github.com/nuqta-ai', 
+            icon_name: 'FiGithub', 
+            is_active: true, 
+            display_order: 1,
+            created_at: '',
+            updated_at: ''
+          },
+          { 
+            id: '2', 
+            platform: 'Twitter', 
+            url: 'https://twitter.com/nuqta_ai', 
+            icon_name: 'FiTwitter', 
+            is_active: true, 
+            display_order: 2,
+            created_at: '',
+            updated_at: ''
+          },
+          { 
+            id: '3', 
+            platform: 'LinkedIn', 
+            url: 'https://linkedin.com/company/nuqtai', 
+            icon_name: 'FiLinkedin', 
+            is_active: true, 
+            display_order: 3,
+            created_at: '',
+            updated_at: ''
+          },
+          { 
+            id: '4', 
+            platform: 'Email', 
+            url: 'mailto:info@nuqtai.com', 
+            icon_name: 'FiMail', 
+            is_active: true, 
+            display_order: 4,
+            created_at: '',
+            updated_at: ''
+          }
+        ]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadSocialMedia();
+  }, []);
+
+  // الحصول على الأيقونة المناسبة من مكتبة react-icons/fi
+  const getIconComponent = (iconName: string) => {
+    const IconComponent = FiIcons[iconName as keyof typeof FiIcons];
+    
+    if (!IconComponent) {
+      console.warn(`Icon ${iconName} not found in react-icons/fi`);
+      return <FiMail />;
+    }
+    
+    return <IconComponent />;
+  };
 
   const footerLinks = [
     {
@@ -34,13 +159,6 @@ const Footer: React.FC = () => {
     },
   ];
 
-  const socialLinks = [
-    { name: 'GitHub', icon: <FiGithub />, href: 'https://github.com/nuqta-ai' },
-    { name: 'Twitter', icon: <FiTwitter />, href: 'https://twitter.com/nuqta_ai' },
-    { name: 'LinkedIn', icon: <FiLinkedin />, href: 'https://linkedin.com/company/nuqta-ai' },
-    { name: 'Email', icon: <FiMail />, href: 'mailto:info@nuqta.ai' },
-  ];
-
   return (
     <footer className="bg-gray-900 border-t border-gray-800">
       <div className="container-custom py-12">
@@ -56,14 +174,14 @@ const Footer: React.FC = () => {
             <div className="flex space-x-4">
               {socialLinks.map((link) => (
                 <a
-                  key={link.name}
-                  href={link.href}
+                  key={link.id}
+                  href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-white transition-colors duration-300"
-                  aria-label={link.name}
+                  aria-label={link.platform}
                 >
-                  {link.icon}
+                  {getIconComponent(link.icon_name)}
                 </a>
               ))}
             </div>

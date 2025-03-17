@@ -5,8 +5,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiUser } from 'react-icons/fi';
+import { FiMenu, FiX, FiUser, FiSun, FiMoon } from 'react-icons/fi';
 import { useAuth } from '@/context/AuthContext';
+import { useTheme } from '@/context/ThemeContext';
 import Button from '../ui/Button';
 import { supabase } from '@/lib/supabase';
 
@@ -14,6 +15,7 @@ const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
   const [sessionStatus, setSessionStatus] = useState<string>('checking');
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -94,7 +96,7 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <Image 
-              src="/images/nuqtalogo.webp" 
+              src="/nuqtalogo.webp" 
               alt="نقطة للذكاء الاصطناعي" 
               width={40} 
               height={40} 
@@ -121,7 +123,15 @@ const Navbar: React.FC = () => {
           </nav>
 
           {/* Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-4 space-x-reverse">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-800 transition-colors duration-300"
+              aria-label={theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+            >
+              {theme === 'dark' ? <FiSun className="text-gray-300" /> : <FiMoon className="text-gray-700" />}
+            </button>
+            
             {showAuthButtons ? (
               <>
                 <div className="text-sm text-gray-300 ml-2">
@@ -153,13 +163,22 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            className="md:hidden text-gray-300 hover:text-white"
-            onClick={toggleMenu}
-            aria-label={isOpen ? 'إغلاق القائمة' : 'فتح القائمة'}
-          >
-            {isOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
+          <div className="flex items-center md:hidden space-x-4 space-x-reverse">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full hover:bg-gray-800 transition-colors duration-300"
+              aria-label={theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
+            >
+              {theme === 'dark' ? <FiSun className="text-gray-300" /> : <FiMoon className="text-gray-700" />}
+            </button>
+            
+            <button
+              onClick={toggleMenu}
+              className="text-gray-400 hover:text-white focus:outline-none"
+            >
+              {isOpen ? <FiX className="text-2xl" /> : <FiMenu className="text-2xl" />}
+            </button>
+          </div>
         </div>
       </div>
 

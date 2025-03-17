@@ -7,9 +7,11 @@ import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/lib/supabase';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import { useTheme } from '@/context/ThemeContext';
 
 export default function SettingsPage() {
   const { user, refreshSession } = useAuth();
+  const { setTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -52,10 +54,7 @@ export default function SettingsPage() {
         throw new Error('لم يتم العثور على بيانات المستخدم');
       }
       
-      // تبسيط عملية التحديث
-      console.log('Starting profile update process...');
-      
-      // 1. تحديث بيانات المستخدم في auth.users
+      // تحديث بيانات المستخدم في auth.users
       console.log('Updating user metadata...');
       const { data: authData, error: authError } = await supabase.auth.updateUser({
         data: { 
@@ -71,54 +70,34 @@ export default function SettingsPage() {
       
       console.log('Auth user updated successfully:', authData);
 
-      // 2. تحديث بيانات المستخدم في جدول profiles
-      console.log('Updating profile in database...');
+      // تحديث بيانات المستخدم في جدول profiles بشكل مباشر
+      console.log('Updating profile in database directly...');
       
-      // محاولة استخدام RPC لتحديث الملف الشخصي
-      try {
-        const { error: rpcError } = await supabase.rpc('update_user_profile', {
-          p_user_id: user.id,
-          p_full_name: formData.name
-        });
-        
-        if (rpcError) {
-          console.error('Error updating profile via RPC:', rpcError);
-          // إذا فشلت الطريقة الأولى، نستخدم الطريقة التقليدية
-          const { error: updateError } = await supabase
-            .from('profiles')
-            .update({ 
-              full_name: formData.name,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', user.id);
-            
-          if (updateError) {
-            console.error('Error updating profile via traditional method:', updateError);
-            throw updateError;
-          }
-        }
-      } catch (profileError) {
-        console.error('Error in profile update:', profileError);
-        
-        // محاولة إنشاء الملف الشخصي إذا لم يكن موجوداً
-        try {
-          const { error: insertError } = await supabase
-            .from('profiles')
-            .insert({
-              id: user.id,
-              full_name: formData.name,
-              email: user.email,
-              role: user.role || 'user',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString()
-            });
-            
-          if (insertError) {
-            console.error('Error creating profile:', insertError);
-            throw insertError;
-          }
-        } catch (insertError) {
-          console.error('Error in profile creation:', insertError);
+      // محاولة التحديث أولاً
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ 
+          full_name: formData.name,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+      
+      // إذا فشل التحديث (لا يوجد سجل)، قم بالإدراج
+      if (updateError) {
+        console.log('Update failed, trying insert:', updateError);
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert({
+            id: user.id,
+            full_name: formData.name,
+            email: user.email,
+            role: 'user',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+          
+        if (insertError) {
+          console.error('Error creating profile:', insertError);
           throw insertError;
         }
       }
@@ -252,6 +231,9 @@ export default function SettingsPage() {
     setIsLoading(true);
 
     try {
+      console.log('Updating preferences:', formData.language, formData.theme);
+      
+      // تحديث بيانات المستخدم في Supabase
       const { error } = await supabase.auth.updateUser({
         data: { 
           language: formData.language,
@@ -260,8 +242,22 @@ export default function SettingsPage() {
       });
 
       if (error) throw error;
+      
+      // تحديث السمة في ThemeContext
+      setTheme(formData.theme as 'dark' | 'light');
+      
+      // تحديث localStorage مباشرة
+      localStorage.setItem('theme', formData.theme);
+      
+      console.log('Preferences updated successfully');
       setSuccess('تم تحديث التفضيلات بنجاح');
+      
+      // إعادة تحميل الصفحة بعد ثانيتين
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error: any) {
+      console.error('Error updating preferences:', error);
       setError(error.message || 'حدث خطأ أثناء تحديث التفضيلات');
     } finally {
       setIsLoading(false);

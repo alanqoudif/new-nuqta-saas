@@ -1,14 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { FiServer, FiCode, FiMessageSquare, FiArrowRight } from 'react-icons/fi';
 import { useAuth } from '@/context/AuthContext';
-import Card from '@/components/ui/Card';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'react-hot-toast';
+import { ServicesService, Service } from '@/lib/services-service';
+import ServiceCard from '@/components/ui/ServiceCard';
 
 const fadeIn = {
   hidden: { opacity: 0, y: 20 },
@@ -36,6 +35,22 @@ export default function DashboardPage() {
   const success = searchParams.get('success');
   const error = searchParams.get('error');
   const [isLoading, setIsLoading] = useState(true);
+  const [services, setServices] = useState<Service[]>([]);
+
+  // تحميل الخدمات من قاعدة البيانات
+  useEffect(() => {
+    const loadServices = async () => {
+      try {
+        const activeServices = await ServicesService.getActiveServices();
+        setServices(activeServices);
+      } catch (err) {
+        console.error('Error loading services:', err);
+        toast.error('حدث خطأ أثناء تحميل الخدمات');
+      }
+    };
+
+    loadServices();
+  }, []);
 
   // تبسيط التحقق من الجلسة
   useEffect(() => {
@@ -117,68 +132,17 @@ export default function DashboardPage() {
         variants={staggerContainer}
         className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
       >
-        <motion.div variants={fadeIn}>
-          <Link href="/dashboard/private-ai-request">
-            <Card className="p-6 hover:border-primary-500 transition-all duration-300 h-full">
-              <div className="flex flex-col h-full">
-                <div className="mb-4">
-                  <div className="p-3 bg-primary-900/30 rounded-lg w-fit">
-                    <FiServer className="text-2xl text-primary-500" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">الذكاء الخاص</h3>
-                <p className="text-gray-400 mb-4 flex-grow">
-                  قم بتنفيذ نماذج الذكاء الاصطناعي المتقدمة في بنيتك التحتية الخاصة مع خصوصية كاملة والتحكم في البيانات.
-                </p>
-                <div className="mt-auto flex items-center text-primary-400 text-sm">
-                  استكشف الآن <FiArrowRight className="mr-1" />
-                </div>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
+        {services.map((service) => (
+          <motion.div key={service.id} variants={fadeIn}>
+            <ServiceCard service={service} />
+          </motion.div>
+        ))}
 
-        <motion.div variants={fadeIn}>
-          <Link href="/dashboard/site-builder">
-            <Card className="p-6 hover:border-secondary-500 transition-all duration-300 h-full">
-              <div className="flex flex-col h-full">
-                <div className="mb-4">
-                  <div className="p-3 bg-secondary-900/30 rounded-lg w-fit">
-                    <FiCode className="text-2xl text-secondary-500" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">منشئ المواقع الذكي</h3>
-                <p className="text-gray-400 mb-4 flex-grow">
-                  أنشئ مواقع ويب مذهلة في دقائق باستخدام الذكاء الاصطناعي.
-                </p>
-                <div className="mt-auto flex items-center text-secondary-400 text-sm">
-                  ابدأ الآن <FiArrowRight className="mr-1" />
-                </div>
-              </div>
-            </Card>
-          </Link>
-        </motion.div>
-
-        <motion.div variants={fadeIn}>
-          <a href="https://whats.nuqtai.com/" target="_blank" rel="noopener noreferrer">
-            <Card className="p-6 hover:border-indigo-500 transition-all duration-300 h-full">
-              <div className="flex flex-col h-full">
-                <div className="mb-4">
-                  <div className="p-3 bg-indigo-900/30 rounded-lg w-fit">
-                    <FiMessageSquare className="text-2xl text-indigo-500" />
-                  </div>
-                </div>
-                <h3 className="text-xl font-bold mb-2">روبوت واتساب</h3>
-                <p className="text-gray-400 mb-4 flex-grow">
-                  دمج روبوتات ذكية في واتساب لخدمة العملاء الآلية.
-                </p>
-                <div className="mt-auto flex items-center text-indigo-400 text-sm">
-                  تعرف على المزيد <FiArrowRight className="mr-1" />
-                </div>
-              </div>
-            </Card>
-          </a>
-        </motion.div>
+        {services.length === 0 && (
+          <div className="col-span-3 text-center py-12">
+            <p className="text-gray-400">لا توجد خدمات متاحة حالياً.</p>
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -20,6 +20,16 @@ body {
   --success-color: 16, 185, 129; /* Verde */
   --warning-color: 245, 158, 11; /* Ámbar */
   --error-color: 239, 68, 68; /* Rojo */
+
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -30,17 +40,120 @@ body {
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 10, 10, 20;
+    --background: #0a0a0a;
+    --foreground: #ededed;
   }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Light mode styles */
+.light body {
+  @apply bg-gray-50 text-gray-900;
+}
+
+.light .bg-gray-950 {
+  @apply bg-gray-50;
+}
+
+.light .bg-gray-900 {
+  @apply bg-white;
+}
+
+.light .bg-gray-800 {
+  @apply bg-gray-100;
+}
+
+.light .border-gray-800 {
+  @apply border-gray-200;
+}
+
+.light .text-gray-400 {
+  @apply text-gray-600;
+}
+
+.light .text-gray-300 {
+  @apply text-gray-700;
+}
+
+.light .text-gray-100 {
+  @apply text-gray-900;
+}
+
+.light .hover\:bg-gray-800:hover {
+  @apply hover:bg-gray-200;
+}
+
+.light .hover\:bg-gray-700:hover {
+  @apply hover:bg-gray-300;
+}
+
+/* Button text colors in light mode */
+.light button, 
+.light .btn,
+.light a.btn {
+  color: #1a202c; /* نص داكن للأزرار في الوضع الفاتح */
+  background-color: #e2e8f0; /* خلفية فاتحة للأزرار */
+  border-color: #cbd5e0;
+}
+
+.light button:hover, 
+.light .btn:hover,
+.light a.btn:hover {
+  background-color: #cbd5e0; /* خلفية أغمق قليلاً عند التحويم */
+}
+
+.light button[variant="primary"],
+.light .btn-primary {
+  background-color: #3182ce; /* أزرق فاتح */
+  color: white; /* نص أبيض للتباين */
+}
+
+.light button[variant="gradient"],
+.light .btn-gradient,
+.light button.gradient-bg,
+.light .gradient-bg {
+  background: linear-gradient(to right, #3182ce, #805ad5);
+  color: white; /* نص أبيض للتباين */
+}
+
+.light button[variant="outline"],
+.light .btn-outline {
+  background-color: transparent;
+  border: 1px solid #3182ce;
+  color: #3182ce;
+}
+
+.light button[variant="outline"]:hover,
+.light .btn-outline:hover {
+  background-color: rgba(49, 130, 206, 0.1);
+}
+
+/* تحسين ظهور الأزرار في شريط التنقل */
+.light .navbar button,
+.light .navbar .btn {
+  color: #1a202c;
+  background-color: #e2e8f0;
+}
+
+.light .navbar button:hover,
+.light .navbar .btn:hover {
+  background-color: #cbd5e0;
+}
+
+/* تحسين ظهور زر تبديل الوضع */
+.light .theme-toggle-button {
+  background-color: #e2e8f0;
+  color: #1a202c;
+  border: 1px solid #cbd5e0;
+}
+
+.light .theme-toggle-button:hover {
+  background-color: #cbd5e0;
 }
 
 /* Estilos personalizados */

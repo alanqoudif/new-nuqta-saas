@@ -5,7 +5,7 @@ export const siteConfig = {
   name: 'نقطة للذكاء الاصطناعي',
   description: 'تقدم نقطة للذكاء الاصطناعي خدمات متقدمة في مجال الذكاء الاصطناعي، بما في ذلك الذكاء الاصطناعي الخاص، وبناء مواقع الويب باستخدام الذكاء الاصطناعي، وروبوتات المحادثة لتطبيق واتساب.',
   url: 'https://nuqta.ai',
-  ogImage: '/images/nuqtalogo.webp',
+  ogImage: '/nuqtalogo.webp',
   links: {
     twitter: 'https://twitter.com/nuqtaai',
     github: 'https://github.com/nuqtaai',
@@ -30,7 +30,7 @@ export function constructMetadata({
   description = siteConfig.description,
   image = siteConfig.ogImage,
   icons = [
-    { url: '/images/nuqtalogo.webp', type: 'image/webp' },
+    { url: '/nuqtalogo.webp', type: 'image/webp' },
     { url: '/favicon.ico' }
   ],
   noIndex = false,

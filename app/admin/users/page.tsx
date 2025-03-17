@@ -86,27 +86,7 @@ export default function AdminUsersPage() {
       setIsLoading(true);
       console.log('Fetching users...');
       
-      // محاولة استخدام دالة get_all_users أولاً
-      try {
-        console.log('Attempting to use get_all_users function...');
-        const { data: authUsers, error: rpcError } = await supabase.rpc('get_all_users');
-        
-        if (rpcError) {
-          console.error('Error using get_all_users RPC:', rpcError);
-          throw rpcError;
-        }
-        
-        if (authUsers && authUsers.length > 0) {
-          console.log('Users fetched successfully via RPC:', authUsers.length);
-          setUsers(authUsers);
-          return;
-        }
-      } catch (rpcError) {
-        console.error('RPC method failed, falling back to direct query:', rpcError);
-      }
-      
-      // محاولة جلب المستخدمين من جدول auth.users وجدول profiles
-      console.log('Fetching users from profiles table...');
+      // جلب المستخدمين من جدول profiles
       const { data: profilesData, error: profilesError } = await supabase
         .from('profiles')
         .select('*')
@@ -114,54 +94,55 @@ export default function AdminUsersPage() {
         
       if (profilesError) {
         console.error('Error fetching profiles:', profilesError);
-        throw profilesError;
+        toast.error('حدث خطأ أثناء جلب بيانات المستخدمين');
+        setUsers([]);
+        return;
       }
       
-      console.log('Profiles fetched successfully:', profilesData?.length);
+      if (!profilesData || profilesData.length === 0) {
+        console.log('No users found');
+        setUsers([]);
+        return;
+      }
       
-      // محاولة إثراء البيانات بمعلومات إضافية من auth.users إذا أمكن
-      const enhancedUsers = await Promise.all((profilesData || []).map(async (profile) => {
-        try {
-          // محاولة جلب معلومات المستخدم من auth.users
-          const { data: userData, error: userError } = await supabase.auth.admin.getUserById(profile.id);
-          
-          if (userError || !userData) {
-            console.log('Could not fetch auth data for user:', profile.id);
-            return profile;
-          }
-          
-          return {
-            ...profile,
-            email: userData.user.email || profile.email || 'بريد إلكتروني غير متوفر',
-            user_metadata: userData.user.user_metadata
-          };
-        } catch (error) {
-          console.log('Error enhancing user data:', error);
-          return profile;
-        }
-      }));
+      console.log('Users fetched successfully:', profilesData.length);
       
-      console.log('Enhanced users data:', enhancedUsers.length);
-      setUsers(enhancedUsers);
-    } catch (error: any) {
-      console.error('Error fetching users:', error);
-      toast.error('حدث خطأ في جلب المستخدمين');
-      
-      // محاولة أخيرة لجلب أي بيانات متاحة
+      // محاولة جلب معلومات إضافية من auth.users إذا كان ممكناً
       try {
-        console.log('Final attempt to fetch any available user data...');
-        const { data: anyUsers, error: anyError } = await supabase
-          .from('profiles')
-          .select('*')
-          .limit(100);
+        const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+        
+        if (!authError && authUsers) {
+          console.log('Auth users fetched successfully:', authUsers.users.length);
           
-        if (!anyError && anyUsers) {
-          console.log('Retrieved some user data in final attempt:', anyUsers.length);
-          setUsers(anyUsers);
+          // إنشاء قاموس للمستخدمين للوصول السريع
+          const authUsersMap = new Map();
+          authUsers.users.forEach(user => {
+            authUsersMap.set(user.id, user);
+          });
+          
+          // دمج بيانات المستخدمين مع الملفات الشخصية
+          const mergedUsers = profilesData.map(profile => {
+            const authUser = authUsersMap.get(profile.id);
+            return {
+              ...profile,
+              email: authUser?.email || profile.email || 'غير متوفر'
+            };
+          });
+          
+          setUsers(mergedUsers);
+          return;
         }
-      } catch (finalError) {
-        console.error('Final attempt also failed:', finalError);
+      } catch (authError) {
+        console.error('Error fetching auth users:', authError);
+        // استمر باستخدام بيانات الملفات الشخصية فقط
       }
+      
+      // إذا فشل جلب بيانات auth.users، استخدم بيانات الملفات الشخصية فقط
+      setUsers(profilesData);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast.error('حدث خطأ أثناء جلب بيانات المستخدمين');
+      setUsers([]);
     } finally {
       setIsLoading(false);
     }

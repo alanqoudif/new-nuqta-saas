@@ -4,15 +4,23 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { FiServer, FiCode, FiMessageSquare, FiArrowRight, FiUser } from 'react-icons/fi';
+import { FiServer, FiCode, FiMessageSquare, FiArrowRight, FiUser, FiExternalLink } from 'react-icons/fi';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import EarlyAccessModal from '@/components/ui/EarlyAccessModal';
+import ExternalServiceModal from '@/components/ui/ExternalServiceModal';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'react-hot-toast';
+
+// أضف هذا النمط لإخفاء العنصر غير المرغوب فيه
+const hideUnwantedElement = {
+  '.nuqta-logo-footer': {
+    display: 'none !important'
+  }
+};
 
 // التأثيرات الحركية
 const fadeIn = {
@@ -39,7 +47,18 @@ export default function Home() {
   const [sessionStatus, setSessionStatus] = useState<string>('checking');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [isEarlyAccessModalOpen, setIsEarlyAccessModalOpen] = useState(false);
+  const [isExternalServiceModalOpen, setIsExternalServiceModalOpen] = useState(false);
   const [selectedService, setSelectedService] = useState<string>('');
+  const [externalServiceUrl, setExternalServiceUrl] = useState<string>('');
+  
+  // إضافة حالة لنموذج الاتصال
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // التحقق من حالة الجلسة عند تحميل الصفحة
   useEffect(() => {
@@ -65,10 +84,76 @@ export default function Home() {
   // معلومات المستخدم للعرض
   const displayName = user?.full_name || userEmail || 'المستخدم';
 
+  // تحديث حالة النموذج
+  const handleContactFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setContactForm(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+
+  // إرسال نموذج الاتصال
+  const handleContactFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!contactForm.name || !contactForm.email || !contactForm.message) {
+      toast.error('يرجى ملء جميع الحقول المطلوبة');
+      return;
+    }
+    
+    setIsSubmitting(true);
+    
+    try {
+      // إرسال البيانات إلى Supabase
+      const { error } = await supabase
+        .from('contact_messages')
+        .insert([
+          {
+            name: contactForm.name,
+            email: contactForm.email,
+            subject: contactForm.subject,
+            message: contactForm.message,
+            created_at: new Date().toISOString()
+          }
+        ]);
+        
+      if (error) throw error;
+      
+      toast.success('تم إرسال رسالتك بنجاح!');
+      
+      // إعادة تعيين النموذج
+      setContactForm({
+        name: '',
+        email: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast.error('حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   // فتح نموذج الوصول المبكر
   const openEarlyAccessModal = (serviceName: string) => {
     setSelectedService(serviceName);
     setIsEarlyAccessModalOpen(true);
+  };
+
+  // فتح نافذة الخدمة الخارجية
+  const openExternalServiceModal = (serviceName: string, serviceUrl: string) => {
+    setSelectedService(serviceName);
+    setExternalServiceUrl(serviceUrl);
+    setIsExternalServiceModalOpen(true);
+  };
+
+  // توجيه المستخدم إلى الخدمة الخارجية
+  const handleExternalServiceConfirm = () => {
+    window.open(externalServiceUrl, '_blank');
+    setIsExternalServiceModalOpen(false);
   };
 
   const services = [
@@ -79,6 +164,7 @@ export default function Home() {
       description: 'قم بتنفيذ نماذج ذكاء اصطناعي متقدمة في بنيتك التحتية الخاصة مع خصوصية كاملة والتحكم في البيانات.',
       comingSoon: true,
       href: '#',
+      isExternal: false,
       onClick: () => openEarlyAccessModal('الذكاء الاصطناعي الخاص')
     },
     {
@@ -88,6 +174,7 @@ export default function Home() {
       description: 'أنشئ مواقع ويب مذهلة في دقائق باستخدام الذكاء الاصطناعي. فقط صف ما تحتاجه.',
       comingSoon: true,
       href: '#',
+      isExternal: false,
       onClick: () => openEarlyAccessModal('بناء المواقع بالذكاء الاصطناعي')
     },
     {
@@ -96,13 +183,23 @@ export default function Home() {
       title: 'روبوت واتساب',
       description: 'دمج روبوتات محادثة ذكية في واتساب لخدمة العملاء الآلية والمخصصة.',
       comingSoon: true,
-      href: '#',
-      onClick: () => openEarlyAccessModal('روبوت واتساب')
+      href: 'https://wa.me/966500000000',
+      isExternal: true,
+      onClick: () => openExternalServiceModal('روبوت واتساب', 'https://wa.me/966500000000')
     }
   ];
 
   return (
     <>
+      <style jsx global>{`
+        .nuqta-logo-footer, 
+        img[alt="نقطة للذكاء الاصطناعي"] + .nuqta-logo-footer,
+        img[src*="nuqtalogo"] + .nuqta-logo-footer,
+        img[src*="nuqta"] + .nuqta-logo-footer,
+        .footer-logo-text {
+          display: none !important;
+        }
+      `}</style>
       <Navbar />
       <main>
         {/* Hero Section */}
@@ -119,7 +216,7 @@ export default function Home() {
             >
               <div className="flex justify-center mb-6">
                 <Image 
-                  src="/images/nuqtalogo.webp" 
+                  src="/nuqtalogo.webp" 
                   alt="نقطة للذكاء الاصطناعي" 
                   width={150} 
                   height={150} 
@@ -283,7 +380,11 @@ export default function Home() {
                       onClick={service.onClick}
                       className="inline-flex items-center text-primary-400 hover:text-primary-300 transition-colors"
                     >
-                      طلب وصول مبكر <FiArrowRight className="mr-2" />
+                      {service.isExternal ? (
+                        <>الانتقال إلى الخدمة <FiExternalLink className="mr-2" /></>
+                      ) : (
+                        <>طلب وصول مبكر <FiArrowRight className="mr-2" /></>
+                      )}
                     </button>
                   </Card>
                 </motion.div>
@@ -431,15 +532,15 @@ export default function Home() {
                   <div className="space-y-4 text-gray-300">
                     <p>
                       <strong className="text-white">البريد الإلكتروني:</strong>{' '}
-                      <a href="mailto:info@nuqta.ai" className="text-primary-400 hover:text-primary-300 transition-colors">
-                        info@nuqta.ai
+                      <a href="mailto:info@nuqtai.com" className="text-primary-400 hover:text-primary-300 transition-colors">
+                        info@nuqtai.com
                       </a>
                     </p>
                     <p>
-                      <strong className="text-white">الهاتف:</strong> +1 (555) 123-4567
+                      <strong className="text-white">الهاتف:</strong> +968 77442969
                     </p>
                     <p>
-                      <strong className="text-white">العنوان:</strong> شارع التكنولوجيا 123، مدينة الابتكار
+                      <strong className="text-white">العنوان:</strong> مسقط الخوير
                     </p>
                     <p>
                       <strong className="text-white">ساعات العمل:</strong> الاثنين إلى الجمعة، 9:00 صباحًا - 6:00 مساءً
@@ -456,27 +557,63 @@ export default function Home() {
               >
                 <Card className="p-6 h-full">
                   <h3 className="text-xl font-bold mb-4">أرسل لنا رسالة</h3>
-                  <form className="space-y-4">
+                  <form className="space-y-4" onSubmit={handleContactFormSubmit}>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label htmlFor="name" className="label">الاسم</label>
-                        <input type="text" id="name" className="input w-full" placeholder="اسمك" />
+                        <input 
+                          type="text" 
+                          id="name" 
+                          className="input w-full" 
+                          placeholder="اسمك" 
+                          value={contactForm.name}
+                          onChange={handleContactFormChange}
+                          required
+                        />
                       </div>
                       <div>
                         <label htmlFor="email" className="label">البريد الإلكتروني</label>
-                        <input type="email" id="email" className="input w-full" placeholder="بريدك@example.com" />
+                        <input 
+                          type="email" 
+                          id="email" 
+                          className="input w-full" 
+                          placeholder="بريدك@example.com" 
+                          value={contactForm.email}
+                          onChange={handleContactFormChange}
+                          required
+                        />
                       </div>
                     </div>
                     <div>
                       <label htmlFor="subject" className="label">الموضوع</label>
-                      <input type="text" id="subject" className="input w-full" placeholder="موضوع الرسالة" />
+                      <input 
+                        type="text" 
+                        id="subject" 
+                        className="input w-full" 
+                        placeholder="موضوع الرسالة" 
+                        value={contactForm.subject}
+                        onChange={handleContactFormChange}
+                      />
                     </div>
                     <div>
                       <label htmlFor="message" className="label">الرسالة</label>
-                      <textarea id="message" rows={4} className="input w-full" placeholder="رسالتك..."></textarea>
+                      <textarea 
+                        id="message" 
+                        rows={4} 
+                        className="input w-full" 
+                        placeholder="رسالتك..." 
+                        value={contactForm.message}
+                        onChange={handleContactFormChange}
+                        required
+                      ></textarea>
                     </div>
-                    <Button variant="gradient" type="submit" fullWidth>
-                      إرسال الرسالة
+                    <Button 
+                      variant="gradient" 
+                      type="submit" 
+                      fullWidth
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة'}
                     </Button>
                   </form>
                 </Card>
@@ -493,6 +630,14 @@ export default function Home() {
         isOpen={isEarlyAccessModalOpen} 
         onClose={() => setIsEarlyAccessModalOpen(false)} 
         serviceName={selectedService}
+      />
+      
+      <ExternalServiceModal
+        isOpen={isExternalServiceModalOpen}
+        onClose={() => setIsExternalServiceModalOpen(false)}
+        serviceName={selectedService}
+        serviceUrl={externalServiceUrl}
+        onConfirm={handleExternalServiceConfirm}
       />
     </>
   );

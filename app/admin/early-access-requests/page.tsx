@@ -64,6 +64,7 @@ export default function AdminEarlyAccessRequestsPage() {
   const fetchRequests = async () => {
     try {
       setIsLoading(true);
+      console.log('Fetching early access requests...');
       
       const { data, error } = await supabase
         .from('early_access_requests')
@@ -72,12 +73,27 @@ export default function AdminEarlyAccessRequestsPage() {
 
       if (error) {
         console.error('Error fetching early access requests:', error);
+        
+        // إذا كان الخطأ بسبب عدم وجود الجدول
+        if (error.code === '42P01') { // relation does not exist
+          toast.error('جدول طلبات الوصول المبكر غير موجود. يرجى إنشاء الجدول أولاً.');
+          setRequests([]);
+          return;
+        }
+        
         toast.error('حدث خطأ في جلب طلبات الوصول المبكر');
         setRequests([]);
         return;
       }
       
-      setRequests(data || []);
+      if (!data || data.length === 0) {
+        console.log('No early access requests found');
+        setRequests([]);
+        return;
+      }
+      
+      console.log('Early access requests fetched successfully:', data.length);
+      setRequests(data);
     } catch (error) {
       console.error('Error fetching requests:', error);
       toast.error('حدث خطأ في جلب طلبات الوصول المبكر');
@@ -248,7 +264,7 @@ export default function AdminEarlyAccessRequestsPage() {
                       <td className="py-3 px-4">
                         <div className="flex space-x-2 space-x-reverse">
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleViewDetails(request)}
                             icon={<FiEye />}
@@ -257,7 +273,7 @@ export default function AdminEarlyAccessRequestsPage() {
                           </Button>
                           {request.status === 'pending' && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               className="text-blue-500 hover:text-blue-400"
                               onClick={() => handleUpdateStatus(request.id, 'contacted')}
@@ -267,7 +283,7 @@ export default function AdminEarlyAccessRequestsPage() {
                           )}
                           {request.status === 'contacted' && (
                             <Button
-                              variant="ghost"
+                              variant="outline"
                               size="sm"
                               className="text-green-500 hover:text-green-400"
                               onClick={() => handleUpdateStatus(request.id, 'completed')}
@@ -375,7 +391,7 @@ export default function AdminEarlyAccessRequestsPage() {
                 
                 {selectedRequest.status === 'pending' && (
                   <Button
-                    variant="gradient"
+                    variant="primary"
                     className="bg-blue-600 hover:bg-blue-700"
                     onClick={() => {
                       handleUpdateStatus(selectedRequest.id, 'contacted');
@@ -388,7 +404,7 @@ export default function AdminEarlyAccessRequestsPage() {
                 
                 {selectedRequest.status === 'contacted' && (
                   <Button
-                    variant="gradient"
+                    variant="primary"
                     className="bg-green-600 hover:bg-green-700"
                     onClick={() => {
                       handleUpdateStatus(selectedRequest.id, 'completed');
