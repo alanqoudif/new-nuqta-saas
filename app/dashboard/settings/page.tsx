@@ -30,7 +30,7 @@ export default function SettingsPage() {
     if (user) {
       setFormData(prev => ({
         ...prev,
-        name: user.user_metadata?.name || '',
+        name: user.full_name || '',
         email: user.email || '',
       }));
     }
