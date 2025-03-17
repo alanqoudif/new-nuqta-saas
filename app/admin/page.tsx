@@ -131,7 +131,7 @@ export default function AdminDashboardPage() {
           .limit(1);
           
         // إذا كان هناك خطأ في أي من الجداول، فهذا يعني أنها غير موجودة
-        const hasErrors = aiRequestsError || contactMessagesError || earlyAccessError || blogPostsError;
+        const hasErrors = !!(aiRequestsError || contactMessagesError || earlyAccessError || blogPostsError);
         
         setDatabaseTablesExist(!hasErrors);
         setShowDatabaseInfo(hasErrors);
