@@ -1,0 +1,127 @@
+/* تعديلات نمط bolt.diy للتوافق مع التصميم العربي */
+
+/* استيراد خط تجوال */
+@import url('/fonts/tajawal.css');
+
+:root {
+  --bolt-elements-background: #0f172a;
+  --bolt-elements-background-depth-1: #1e293b;
+  --bolt-elements-background-depth-2: #334155;
+  --bolt-elements-textPrimary: #f8fafc;
+  --bolt-elements-textSecondary: #cbd5e1;
+  --bolt-elements-textTertiary: #94a3b8;
+  --bolt-elements-border: #334155;
+  --bolt-elements-borderColor: #475569;
+  --bolt-elements-ring: #6366f1;
+  --bolt-elements-item-backgroundDefault: #1e293b;
+  --bolt-elements-item-backgroundActive: #334155;
+  --bolt-elements-item-backgroundAccent: #6366f1;
+  --bolt-elements-item-contentAccent: #f8fafc;
+}
+
+/* تعديلات RTL */
+.bolt-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.bolt-rtl .side-menu {
+  right: 0;
+  left: auto;
+  border-left: 1px solid var(--bolt-elements-border);
+  border-right: none;
+}
+
+.bolt-rtl .i-lucide\:search,
+.bolt-rtl .i-lucide\:message-square {
+  margin-left: 0.5rem;
+  margin-right: 0;
+}
+
+.bolt-rtl input,
+.bolt-rtl textarea {
+  text-align: right;
+}
+
+.bolt-rtl .flex-row {
+  flex-direction: row-reverse;
+}
+
+.bolt-rtl .ml-2,
+.bolt-rtl .ml-3,
+.bolt-rtl .ml-4 {
+  margin-left: 0;
+  margin-right: 0.5rem;
+}
+
+.bolt-rtl .mr-2,
+.bolt-rtl .mr-3,
+.bolt-rtl .mr-4 {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+
+.bolt-rtl .space-x-2 > :not([hidden]) ~ :not([hidden]),
+.bolt-rtl .space-x-3 > :not([hidden]) ~ :not([hidden]),
+.bolt-rtl .space-x-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* تعديلات الخط */
+.bolt-rtl * {
+  font-family: 'Tajawal', sans-serif;
+}
+
+/* تعديلات الألوان */
+.bolt-theme-nuqta .bg-purple-50 {
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+.bolt-theme-nuqta .text-purple-700,
+.bolt-theme-nuqta .text-purple-300 {
+  color: #6366f1;
+}
+
+.bolt-theme-nuqta .hover\:bg-purple-100:hover,
+.bolt-theme-nuqta .dark\:hover\:bg-purple-500\/20:hover {
+  background-color: rgba(99, 102, 241, 0.2);
+}
+
+.bolt-theme-nuqta .focus\:ring-purple-500:focus {
+  --tw-ring-color: rgba(99, 102, 241, 0.5);
+}
+
+/* تعديلات واجهة المستخدم */
+.bolt-theme-nuqta .selection-accent::selection {
+  background-color: rgba(99, 102, 241, 0.3);
+}
+
+.bolt-theme-nuqta .dark\:bg-gray-950 {
+  background-color: #0f172a;
+}
+
+.bolt-theme-nuqta .dark\:bg-gray-900 {
+  background-color: #1e293b;
+}
+
+.bolt-theme-nuqta .dark\:bg-gray-800 {
+  background-color: #334155;
+}
+
+.bolt-theme-nuqta .dark\:border-gray-800\/50 {
+  border-color: rgba(51, 65, 85, 0.5);
+}
+
+/* تعديلات الأزرار */
+.bolt-theme-nuqta button {
+  border-radius: 0.5rem;
+}
+
+.bolt-theme-nuqta .rounded-lg {
+  border-radius: 0.5rem;
+}
+
+/* تعديلات الظل */
+.bolt-theme-nuqta .shadow-sm {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+} 

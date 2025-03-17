@@ -1,237 +1,87 @@
+# نقطة للذكاء الاصطناعي - دليل المستخدم والمطور
 
-<div align="center" width="100%">
-    <img src="./saasfly-logo.svg" width="128" alt="" />
-</div>
+## مقدمة
 
-# Saasfly </br>
-<a href="https://trendshift.io/repositories/8929" target="_blank"><img src="https://trendshift.io/api/badge/repositories/8929" alt="saasfly%2Fsaasfly | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+هذا المشروع هو منصة لإدارة خدمات الذكاء الاصطناعي، بما في ذلك طلبات الذكاء الاصطناعي الخاص وإدارة المستخدمين.
 
-[![GitHub Actions Workflow Status][check-workflow-badge]][check-workflow-badge-link] [![GitHub License][github-license-badge]][github-license-badge-link]  [![Discord][discord-badge]][discord-badge-link] [![Saasfly][made-by-nextify-badge]][made-by-nextify-badge-link]
-[![Chinese](https://img.shields.io/badge/-Chinese-red.svg)](README_zh.md)
-[![German](https://img.shields.io/badge/-German-yellow.svg)](README_de.md)
-[![Vietnamese](https://img.shields.io/badge/-Vietnamese-yellow.svg)](README_vi.md) </br>
-![COMMIT_ACTIVITY](https://img.shields.io/github/commit-activity/m/saasfly/saasfly?style=for-the-badge">)
-[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fsaasfly%2Fsaasfly&labelColor=%23f47373&countColor=%23263759)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Fsaasfly%2Fsaasfly)
+## متطلبات النظام
 
-An easy-to-use and enterprise-grade Next.js boilerplate.
+- Node.js (الإصدار 16 أو أحدث)
+- قاعدة بيانات Supabase
+- متصفح حديث
 
-You don't need to buy templates anymore; Saasfly provides a complete, open-source solution for building SaaS applications quickly and easily.
+## تثبيت وتشغيل المشروع
 
-> **[Nextify](https://nextify.ltd)** provides a complete Enterprise SaaS solution. Contact us at [contact@nextify.ltd](mailto:contact@nextify.ltd) if you're interested in discussing your project, or if you'd simply like to have a conversation with us, please feel free to reach out.
+1. قم بتثبيت الاعتمادات:
+   ```bash
+   npm install
+   ```
 
-> ❤️ We provide **free technical support and deployment services to non-profit organizations**.
->
-> 🙌 All profits obtained from our open source projects will be **entirely dedicated to supporting open source initiatives and charitable causes**.
+2. قم بتشغيل المشروع في وضع التطوير:
+   ```bash
+   npm run dev
+   ```
 
-## ⚡ Live Demo
+3. قم بفتح المتصفح على العنوان:
+   ```
+   http://localhost:3000
+   ```
 
-Try it out for yourself!
+## إعداد قاعدة البيانات
 
-Demo Server (Location: Washington - USA): <https://show.saasfly.io>
+يجب تنفيذ ملفات SQL التالية في SQL Editor في Supabase بالترتيب:
 
-See more documentation at <https://document.saasfly.io>
+1. `sql/fix_privateai_requests_table.sql` - لإصلاح جدول طلبات الذكاء الاصطناعي الخاص
+2. `sql/create_fix_schema_function.sql` - لإنشاء دالة إصلاح هيكل الجدول
+3. `sql/create_get_all_users_function.sql` - لإنشاء دالة جلب جميع المستخدمين
+4. `sql/create_privateai_request_function.sql` - لإنشاء دالة إنشاء طلب ذكاء اصطناعي خاص
+5. `sql/create_update_user_profile_function.sql` - لإنشاء دالة تحديث ملف المستخدم
 
-## 🌟 Star History
+### نصائح لتنفيذ ملفات SQL
 
-[![Star History Chart](https://api.star-history.com/svg?repos=saasfly/saasfly&type=Timeline)](https://star-history.com/#saasfly/saasfly&Timeline)
+- قم بتنفيذ كل ملف على حدة في SQL Editor
+- تأكد من تنفيذ الملفات بالترتيب المذكور أعلاه
+- إذا واجهت خطأ في تنفيذ أحد الملفات، قم بتقسيمه إلى أجزاء أصغر وتنفيذها واحداً تلو الآخر
 
-## Sponsors
+## الميزات الرئيسية
 
-<table>
-  <tr >
-    <td>
-      <a href="https://www.twillot.com/">
-        <picture>
-          <img alt="Take Control of All Your Twitter Assets" src="/twillot.png">
-        </picture>
-      </a>
-    </td>
-    <td>
-      <a href="https://www.setupyourpay.com/" title="如何注册美国公司进行收款">
-        <picture>
-          <img alt="全球收款手册" src="/setupyourpay.png">
-        </picture>
-      </a>
-    </td>
-  <tr >
-    <td >
-      <a href="mailto:contact@nextify.ltd">
-        Add your logo here
-      </a>
-    </td>
-  </tr>
-</table>
+1. **لوحة التحكم**: عرض معلومات المستخدم والخدمات المتاحة
+2. **طلب الذكاء الاصطناعي الخاص**: تقديم طلب للحصول على خدمة الذكاء الاصطناعي الخاص
+3. **إعدادات المستخدم**: تحديث معلومات الملف الشخصي وتغيير كلمة المرور
+4. **لوحة الإدارة**: إدارة المستخدمين وطلبات الذكاء الاصطناعي الخاص (للمسؤولين فقط)
 
-## 🚀 Getting Started
+## حل المشاكل الشائعة
 
-### 🖱 One Click Template
+### مشكلة: خطأ في هيكل جدول privateai_requests
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsaasfly%2Fsaasfly&env=NEXT_PUBLIC_APP_URL,NEXTAUTH_URL,NEXTAUTH_SECRET,STRIPE_API_KEY,STRIPE_WEBHOOK_SECRET,POSTGRES_URL,GITHUB_CLIENT_ID,GITHUB_CLIENT_SECRET,RESEND_API_KEY,RESEND_FROM&install-command=bun%20install&build-command=bun%20run%20build&root-directory=apps%2Fnextjs)
+إذا ظهر خطأ مثل "Could not find the 'domain_of_use' column of 'privateai_requests' in the schema cache"، قم بتنفيذ ملف `sql/fix_privateai_requests_table.sql` في SQL Editor في Supabase.
 
-### 📋 Prerequisites
+### مشكلة: عدم ظهور المستخدمين في لوحة الإدارة
 
-Before you start, make sure you have the following installed:
+قم بتنفيذ ملف `sql/create_get_all_users_function.sql` في SQL Editor في Supabase.
 
-1. [Bun](https://bun.sh/) & [Node.js](https://nodejs.org/) & [Git](https://git-scm.com/)
+### مشكلة: عدم حفظ التغييرات في إعدادات المستخدم
 
-   1. Linux
+قم بتنفيذ ملف `sql/create_update_user_profile_function.sql` في SQL Editor في Supabase.
 
-    ```bash
-      curl -sL https://gist.github.com/tianzx/874662fb204d32390bc2f2e9e4d2df0a/raw -o ~/downloaded_script.sh && chmod +x ~/downloaded_script.sh && source ~/downloaded_script.sh
-    ```
+### مشكلة: خطأ في تنفيذ ملفات SQL
 
-   2. MacOS
+إذا واجهت خطأ مثل "syntax error at or near BEGIN"، قم بتقسيم الملف إلى أجزاء أصغر وتنفيذها واحداً تلو الآخر.
 
-    ```bash
-      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-      brew install git
-      brew install oven-sh/bun/bun
-      brew install nvm
-    ```
+## الأمان
 
-2. [PostgreSQL](https://www.postgresql.org/)
-   1. You can use Vercel Postgres or a local PostgreSQL server(add POSTGRES_URL env in .env.local)
-      ```bash
-         POSTGRES_URL = ''
-      ```
+- تأكد من تعيين الصلاحيات المناسبة في Supabase
+- استخدم دائماً وظائف RPC مع SECURITY DEFINER للعمليات الحساسة
+- تحقق من صلاحيات المستخدم قبل السماح بالوصول إلى لوحة الإدارة
 
-### Installation
+## المساهمة
 
-To get started with this boilerplate, we offer two options:
+نرحب بمساهماتكم! يرجى اتباع الخطوات التالية:
 
-1. Use the `bun create` command(🌟Strongly recommend🌟):
+1. قم بعمل fork للمشروع
+2. قم بإنشاء فرع جديد للميزة التي تريد إضافتها
+3. قم بإرسال طلب سحب (Pull Request)
 
-```bash
-bun create saasfly 
-```
+## الترخيص
 
-2. Manually clone the repository:
-
-```bash
-git clone https://github.com/saasfly/saasfly.git
-cd saasfly
-bun install
-```
-
-### Setup
-
-Follow these steps to set up your project:
-
-1. Set up the environment variables:
-
-```bash
-cp .env.example .env.local
-// (you must have a database prepared before running this command)
-bun db:push
-```
-
-2. Run the development server:
-
-```bash
-bun run dev:web
-```
-
-3. Open [http://localhost:3000](http://localhost:3000) in your browser to see the result.
-
-4. (Optional alpha)`bun run tailwind-config-viewer` Open [http://localhost:3333](http://localhost:3333) in your browser to see your Tailwind CSS configuration
-
-
-## 🥺 Project Roadmap
-
-1. Admin Dashboard Page (in alpha !!!)
-    1. Only provide static page now and we plan to integrate with headless arch
-    2. You can provide your admin account and change **ADMIN_EMAIL="admin@saasfly.io,root@saasfly.io"** in .env.local and access host:port/admin/dashboard
-    3. Based on security concerns, we will not provide online demos for the time being.
-2. Consider integrating Payload CMS.
-
-## ⭐ Features
-
-### 🐭 Frameworks
-
-- **[Next.js](https://nextjs.org/)** - The React Framework for the Web (with **App Directory**)
-- **[NextAuth.js](https://next-auth.js.org/)** - Authentication for Next.js
-- **[Kysely](https://kysely.dev/)** - The type-safe SQL query builder for TypeScript
-- **[Prisma](https://www.prisma.io/)** - Next-generation ORM for Node.js and TypeScript, used as a schema management tool
-- **[React-email](https://react.email/)** - A React renderer for creating beautiful emails using React components
-
-### 🐮 Platforms
-
-- **[Vercel](https://vercel.com/)** – Deploy your Next.js app with ease
-- **[Stripe](https://stripe.com/)** – Payment processing for internet businesses
-- **[Resend](https://resend.com/)** – Email marketing platform for developers
-
-### 🐯 Enterprise Features
-
-- **[i18n](https://nextjs.org/docs/app/building-your-application/routing/internationalization)** - Support for internationalization
-- **[SEO](https://nextjs.org/docs/app/building-your-application/optimizing/metadata)** - Search engine optimization
-- **[MonoRepo](https://turbo.build/)** - Monorepo for better code management
-- **[T3 Env](https://env.t3.gg/)** - Manage your environment variables with ease
-
-### 🐰 Data Fetching
-
-- **[trpc](https://trpc.io/)** – End-to-end typesafe APIs made easy
-- **[tanstack/react-query](https://react-query.tanstack.com/)** – Hooks for fetching, caching and updating asynchronous data in React
-
-### 🐲 Global State Management
-
-- **[Zustand](https://zustand.surge.sh/)** – Small, fast and scalable state management for React
-
-### 🐒 UI
-
-- **[Tailwind CSS](https://tailwindcss.com/)** – Utility-first CSS framework for rapid UI development
-- **[Shadcn/ui](https://ui.shadcn.com/)** – Re-usable components built using Radix UI and Tailwind CSS
-- **[Framer Motion](https://framer.com/motion)** – Motion library for React to animate components with ease
-- **[Lucide](https://lucide.dev/)** – Beautifully simple, pixel-perfect icons
-- **[next/font](https://nextjs.org/docs/basic-features/font-optimization)** – Optimize custom fonts and remove external network requests for improved performance
-
-### 🐴 Code Quality
-
-- **[TypeScript](https://www.typescriptlang.org/)** – Static type checker for end-to-end type safety
-- **[Prettier](https://prettier.io/)** – Opinionated code formatter for consistent code style
-- **[ESLint](https://eslint.org/)** – Pluggable linter for Next.js and TypeScript
-- **[Husky](https://typicode.github.io/husky)** – Git hooks made easy
-
-### 🐑 Performance
-
-- **[Vercel Analytics](https://vercel.com/analytics)** – Real-time performance metrics for your Next.js app
-- **[bun.sh](https://bun.sh/)** – npm alternative for faster and more reliable package management
-
-### 🐘 Database
-
-- **[PostgreSQL](https://www.postgresql.org/)** – The world's most advanced open source database
-
-## 📦 Apps and Packages
-
-- `web`: The main Next.js application
-- `ui`: Shared UI components
-- `db`: Database schema and utilities
-- `auth`: Authentication utilities
-- `email`: Email templates and utilities
-
-## 📜 License
-
-This project is licensed under the MIT License. For more information, see the [LICENSE](./LICENSE) file.
-
-## 🙏 Credits
-
-This project was inspired by shadcn's [Taxonomy](https://github.com/shadcn-ui/taxonomy) and t3-oss's [create-t3-turbo](https://github.com/t3-oss/create-t3-turbo).
-
-## 👨‍💻 Contributors
-
-<a href="https://github.com/saasfly/saasfly/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=saasfly/saasfly" />
-</a>
-
-Made with [contrib.rocks](https://contrib.rocks).
-
-<!-- Badges and links -->
-
-[check-workflow-badge]: https://img.shields.io/github/actions/workflow/status/saasfly/saasfly/ci.yml?label=ci
-[github-license-badge]: https://img.shields.io/badge/License-MIT-green.svg
-[discord-badge]: https://img.shields.io/discord/1204690198382911488?color=7b8dcd&link=https%3A%2F%2Fsaasfly.io%2Fdiscord
-[made-by-nextify-badge]: https://img.shields.io/badge/made_by-nextify-blue?color=FF782B&link=https://nextify.ltd/
-
-[check-workflow-badge-link]: https://github.com/saasfly/saasfly/actions/workflows/check.yml
-[github-license-badge-link]: https://github.com/saasfly/saasfly/blob/main/LICENSE
-[discord-badge-link]: https://discord.gg/8SwSX43wnD
-[made-by-nextify-badge-link]: https://nextify.ltd
+هذا المشروع مرخص تحت رخصة MIT.
