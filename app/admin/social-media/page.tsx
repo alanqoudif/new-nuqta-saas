@@ -68,7 +68,9 @@ export default function AdminSocialMediaPage() {
       } else {
         console.log('Admin: No social media found, showing empty state');
         setSocialMedia([]);
-        toast.info('لا توجد وسائل تواصل اجتماعي. قم بإضافة وسائل تواصل جديدة.');
+        toast('لا توجد وسائل تواصل اجتماعي. قم بإضافة وسائل تواصل جديدة.', {
+          icon: 'ℹ️',
+        });
       }
     } catch (error) {
       console.error('Error loading social media:', error);
