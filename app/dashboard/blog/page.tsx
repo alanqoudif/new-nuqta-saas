@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import DashboardLayout from '@/components/layout/DashboardLayout';
-import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
-import { supabase } from '@/lib/supabase';
-import { formatDate } from '@/utils/date';
+import DashboardLayout from '../../../components/layout/DashboardLayout';
+import Button from '../../../components/ui/Button';
+import Card from '../../../components/ui/Card';
+import { supabase } from '../../../lib/supabase';
+import { formatDate } from '../../../utils/date';
 import { FiEdit, FiPlus, FiTrash2 } from 'react-icons/fi';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '../../../context/AuthContext';
 
 // تعريف نوع البيانات للمقالة
 interface BlogPost {
