@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 interface ButtonProps {
   children: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'gradient';
+  variant?: 'primary' | 'secondary' | 'outline' | 'gradient' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
   disabled?: boolean;
@@ -35,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
     secondary: 'bg-gray-800 text-white hover:bg-gray-700 active:bg-gray-600',
     outline: 'bg-transparent border border-gray-700 text-white hover:bg-gray-800 active:bg-gray-700',
     gradient: 'bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 text-white hover:from-primary-700 hover:via-secondary-700 hover:to-accent-700',
+    ghost: 'bg-transparent text-white hover:bg-gray-800 active:bg-gray-700',
   };
   
   const sizeClasses = {

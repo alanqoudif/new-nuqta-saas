@@ -275,7 +275,7 @@ export default function AdminAIRequestsPage() {
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
                         <Button
-                          variant="ghost"
+                          variant="outline"
                           size="sm"
                           icon={<FiEye />}
                           onClick={() => handleViewDetails(request)}

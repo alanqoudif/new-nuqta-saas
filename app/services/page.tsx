@@ -9,7 +9,7 @@ import { ServicesService, Service } from '@/lib/services-service';
 import DynamicIcon from '@/components/ui/DynamicIcon';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function PublicServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
@@ -247,7 +247,7 @@ export default function PublicServicesPage() {
               <div className="md:col-span-1">
                 <div className="bg-white p-4 rounded-lg flex flex-col items-center">
                   <h3 className="text-lg font-bold mb-3 text-gray-900">امسح الرمز للوصول السريع</h3>
-                  <QRCode 
+                  <QRCodeSVG 
                     value={getFullServiceUrl(selectedService.url)}
                     size={180}
                     level="H"
