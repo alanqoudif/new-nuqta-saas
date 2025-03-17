@@ -24,17 +24,17 @@ interface BlogPost {
 }
 
 export default function BlogAdminPage() {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     // التحقق من صلاحيات المستخدم
-    if (profile) {
-      setIsAdmin(profile.role === 'admin');
+    if (user) {
+      setIsAdmin(user.role === 'admin');
     }
-  }, [profile]);
+  }, [user]);
 
   useEffect(() => {
     async function fetchBlogPosts() {
