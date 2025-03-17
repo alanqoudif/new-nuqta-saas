@@ -115,7 +115,7 @@ export default function BlogAdminPage() {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold">إدارة المدونة</h1>
           <Link href="/dashboard/blog/new">
-            <Button variant="gradient">
+            <Button variant="primary">
               <FiPlus className="ml-2" /> إضافة مقالة جديدة
             </Button>
           </Link>
@@ -190,7 +190,7 @@ export default function BlogAdminPage() {
               ابدأ بإضافة مقالة جديدة لمدونتك.
             </p>
             <Link href="/dashboard/blog/new">
-              <Button variant="gradient">
+              <Button variant="primary">
                 <FiPlus className="ml-2" /> إضافة مقالة جديدة
               </Button>
             </Link>
