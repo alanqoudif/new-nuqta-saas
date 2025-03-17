@@ -1,71 +1,75 @@
-"use client";
-
 import React from 'react';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface ButtonProps {
-  children?: React.ReactNode;
-  variant?: 'primary' | 'secondary' | 'outline' | 'gradient' | 'ghost' | 'danger' | 'destructive' | 'warning' | 'success';
-  size?: 'sm' | 'md' | 'lg';
+  children: React.ReactNode;
   onClick?: () => void;
+  variant?: 'primary' | 'secondary' | 'outline';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   className?: string;
-  type?: 'button' | 'submit' | 'reset';
-  fullWidth?: boolean;
   icon?: React.ReactNode;
-  iconPosition?: 'left' | 'right';
+  fullWidth?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-const Button: React.FC<ButtonProps> = ({
-  children,
-  variant = 'primary',
-  size = 'md',
-  onClick,
-  disabled = false,
-  className = '',
-  type = 'button',
-  fullWidth = false,
+const Button: React.FC<ButtonProps> = ({ 
+  children, 
+  onClick, 
+  variant = 'primary', 
+  href, 
+  type = 'button', 
+  disabled = false, 
+  className = '', 
   icon,
-  iconPosition = 'left',
+  fullWidth = false,
+  size = 'md'
 }) => {
-  const baseClasses = 'rounded-lg font-medium transition-all duration-300 flex items-center justify-center';
+  
+  const baseClasses = "inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500";
   
   const variantClasses = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800',
-    secondary: 'bg-gray-800 text-white hover:bg-gray-700 active:bg-gray-600',
-    outline: 'bg-transparent border border-gray-700 text-white hover:bg-gray-800 active:bg-gray-700',
-    gradient: 'bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 text-white hover:from-primary-700 hover:via-secondary-700 hover:to-accent-700',
-    ghost: 'bg-transparent text-white hover:bg-gray-800 active:bg-gray-700',
-    danger: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
-    destructive: 'bg-red-600 text-white hover:bg-red-700 active:bg-red-800',
-    warning: 'bg-yellow-600 text-white hover:bg-yellow-700 active:bg-yellow-800',
-    success: 'bg-green-600 text-white hover:bg-green-700 active:bg-green-800',
+    primary: "bg-primary-600 hover:bg-primary-700 text-white shadow-sm",
+    secondary: "bg-secondary-500 hover:bg-secondary-600 text-white shadow-sm",
+    outline: "border-2 border-primary-600 text-primary-600 hover:bg-primary-50"
   };
   
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2',
-    lg: 'px-6 py-3 text-lg',
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2 text-base",
+    lg: "px-6 py-3 text-lg"
   };
   
-  const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'transform hover:scale-105';
-  const widthClass = fullWidth ? 'w-full' : '';
+  const classes = `
+    ${baseClasses} 
+    ${variantClasses[variant]} 
+    ${sizeClasses[size]}
+    ${fullWidth ? 'w-full' : ''}
+    ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+    ${className}
+  `;
+  
+  if (href) {
+    return (
+      <Link href={href} className={classes}>
+        {icon && <span className="mr-2">{icon}</span>}
+        {children}
+      </Link>
+    );
+  }
   
   return (
-    <motion.button
+    <button
       type={type}
+      className={classes}
       onClick={onClick}
       disabled={disabled}
-      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${disabledClasses} ${widthClass} ${className}`}
-      whileHover={!disabled ? { scale: 1.05 } : {}}
-      whileTap={!disabled ? { scale: 0.95 } : {}}
     >
-      {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
+      {icon && <span className="ml-2">{icon}</span>}
       {children}
-      {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
-      {icon && !children && <span>{icon}</span>}
-    </motion.button>
+    </button>
   );
 };
 
-export default Button; 
+export default Button;
