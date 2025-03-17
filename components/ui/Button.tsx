@@ -4,7 +4,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 
 interface ButtonProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   variant?: 'primary' | 'secondary' | 'outline' | 'gradient' | 'ghost' | 'danger' | 'destructive' | 'warning' | 'success';
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
@@ -63,6 +63,7 @@ const Button: React.FC<ButtonProps> = ({
       {icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>}
       {children}
       {icon && iconPosition === 'right' && <span className="ml-2">{icon}</span>}
+      {icon && !children && <span>{icon}</span>}
     </motion.button>
   );
 };
