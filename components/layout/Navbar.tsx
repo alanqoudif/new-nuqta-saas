@@ -4,265 +4,138 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FiMenu, FiX, FiUser, FiSun, FiMoon } from 'react-icons/fi';
-import { useAuth } from '@/context/AuthContext';
-import { useTheme } from '@/context/ThemeContext';
-import Button from '../ui/Button';
-import { supabase } from '@/lib/supabase';
+import { motion } from 'framer-motion';
+import { FiMenu, FiX } from 'react-icons/fi';
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const { user, signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const pathname = usePathname();
-  const [sessionStatus, setSessionStatus] = useState<string>('checking');
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-
-  // التحقق من حالة الجلسة عند تحميل المكون
-  useEffect(() => {
-    const checkSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        setSessionStatus(session ? 'active' : 'none');
-        setUserEmail(session?.user?.email || null);
-        
-        console.log('Navbar session check:', session ? 'Active' : 'None', 'User:', session?.user?.email || 'None');
-      } catch (error) {
-        console.error('Error checking session in Navbar:', error);
-        setSessionStatus('error');
-      }
-    };
-    
-    checkSession();
-    
-    // الاستماع لتغييرات حالة المصادقة
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed in Navbar:', event, session?.user?.email || 'None');
-      setSessionStatus(session ? 'active' : 'none');
-      setUserEmail(session?.user?.email || null);
-    });
-    
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
-  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 50);
     };
-
+    
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
-  const navLinks = [
-    { name: 'الرئيسية', href: '/' },
-    { name: 'خدماتنا', href: '/#services' },
-    { name: 'من نحن', href: '/#about' },
-    { name: 'اتصل بنا', href: '/#contact' },
-  ];
-
   const isActive = (path: string) => {
-    if (path.includes('#')) {
-      return pathname === '/' && path.startsWith('/#');
-    }
     return pathname === path;
   };
 
-  // تحديد ما إذا كان يجب عرض أزرار المصادقة
-  const showAuthButtons = user || sessionStatus === 'active';
-  
-  // معلومات المستخدم للعرض
-  const displayName = user?.full_name || userEmail || 'المستخدم';
-
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-gray-900/80 backdrop-blur-lg shadow-lg' : 'bg-transparent'
-      }`}
-    >
-      <div className="container-custom py-4">
-        <div className="flex items-center justify-between">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <Image 
-              src="/nuqtalogo.webp" 
-              alt="نقطة للذكاء الاصطناعي" 
-              width={40} 
-              height={40} 
-              className="h-auto"
-            />
-            <span className="text-2xl font-bold gradient-text mr-2">نقطة للذكاء الاصطناعي</span>
+          <Link href="/" className="flex items-center" onClick={closeMenu}>
+            <div className="relative h-10 w-40">
+              <Image
+                src="https://raw.githubusercontent.com/alanqoudif/new-nuqta-saas/main/public/nuqta-logo.png"
+                alt="نقطة للذكاء الإصطناعي"
+                className="object-contain"
+                fill
+                priority
+              />
+            </div>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-0 gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className={`text-sm font-medium transition-colors duration-300 ${
-                  isActive(link.href)
-                    ? 'text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+          {/* Desktop Menu */}
+          <nav className="hidden md:flex items-center space-x-1 justify-end space-x-reverse">
+            <Link 
+              href="/" 
+              className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/') ? 'text-primary-600' : 'text-gray-700 hover:text-primary-600'}`}
+              onClick={closeMenu}
+            >
+              الرئيسية
+            </Link>
+            <Link 
+              href="/services" 
+              className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/services') ? 'text-primary-600' : 'text-gray-700 hover:text-primary-600'}`}
+              onClick={closeMenu}
+            >
+              خدماتنا
+            </Link>
+            <Link 
+              href="/about" 
+              className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/about') ? 'text-primary-600' : 'text-gray-700 hover:text-primary-600'}`}
+              onClick={closeMenu}
+            >
+              من نحن
+            </Link>
+            <Link 
+              href="/contact" 
+              className={`px-3 py-2 rounded-md text-base font-medium transition-colors ${isActive('/contact') ? 'text-primary-600' : 'text-gray-700 hover:text-primary-600'}`}
+              onClick={closeMenu}
+            >
+              اتصل بنا
+            </Link>
           </nav>
 
-          {/* Auth Buttons */}
-          <div className="hidden md:flex items-center space-x-4 space-x-reverse">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-800 transition-colors duration-300"
-              aria-label={theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
-            >
-              {theme === 'dark' ? <FiSun className="text-gray-300" /> : <FiMoon className="text-gray-700" />}
-            </button>
-            
-            {showAuthButtons ? (
-              <>
-                <div className="text-sm text-gray-300 ml-2">
-                  مرحباً، {displayName}
-                </div>
-                <Link href="/dashboard">
-                  <Button variant="outline" size="sm">
-                    لوحة التحكم
-                  </Button>
-                </Link>
-                <Button variant="secondary" size="sm" onClick={signOut}>
-                  تسجيل الخروج
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link href="/auth/login">
-                  <Button variant="outline" size="sm">
-                    تسجيل الدخول
-                  </Button>
-                </Link>
-                <Link href="/auth/signup">
-                  <Button variant="gradient" size="sm">
-                    إنشاء حساب
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="flex items-center md:hidden space-x-4 space-x-reverse">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-gray-800 transition-colors duration-300"
-              aria-label={theme === 'dark' ? 'تفعيل الوضع الفاتح' : 'تفعيل الوضع الداكن'}
-            >
-              {theme === 'dark' ? <FiSun className="text-gray-300" /> : <FiMoon className="text-gray-700" />}
-            </button>
-            
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
             <button
               onClick={toggleMenu}
-              className="text-gray-400 hover:text-white focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-primary-600 focus:outline-none"
             >
-              {isOpen ? <FiX className="text-2xl" /> : <FiMenu className="text-2xl" />}
+              <span className="sr-only">فتح القائمة الرئيسية</span>
+              {isOpen ? (
+                <FiX className="block h-6 w-6" aria-hidden="true" />
+              ) : (
+                <FiMenu className="block h-6 w-6" aria-hidden="true" />
+              )}
             </button>
           </div>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="md:hidden bg-gray-900 border-t border-gray-800"
+      <motion.div 
+        className={`md:hidden ${isOpen ? 'block' : 'hidden'}`}
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: isOpen ? 1 : 0, height: isOpen ? 'auto' : 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <div className="px-2 pt-2 pb-3 space-y-1 bg-white shadow-lg rounded-b-lg">
+          <Link 
+            href="/" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'}`}
+            onClick={closeMenu}
           >
-            <div className="container-custom py-4">
-              <nav className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.name}
-                    href={link.href}
-                    className={`text-sm font-medium transition-colors duration-300 ${
-                      isActive(link.href)
-                        ? 'text-white'
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                    onClick={closeMenu}
-                  >
-                    {link.name}
-                  </Link>
-                ))}
-                {showAuthButtons ? (
-                  <>
-                    <div className="text-sm text-gray-300 flex items-center">
-                      <FiUser className="mr-2" />
-                      {displayName}
-                    </div>
-                    <Link
-                      href="/dashboard"
-                      className="text-sm font-medium text-gray-400 hover:text-white"
-                      onClick={closeMenu}
-                    >
-                      لوحة التحكم
-                    </Link>
-                    <button
-                      className="text-sm font-medium text-gray-400 hover:text-white text-right"
-                      onClick={() => {
-                        signOut();
-                        closeMenu();
-                      }}
-                    >
-                      تسجيل الخروج
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      href="/auth/login"
-                      className="text-sm font-medium text-gray-400 hover:text-white"
-                      onClick={closeMenu}
-                    >
-                      تسجيل الدخول
-                    </Link>
-                    <Link
-                      href="/auth/signup"
-                      className="text-sm font-medium text-gray-400 hover:text-white"
-                      onClick={closeMenu}
-                    >
-                      إنشاء حساب
-                    </Link>
-                  </>
-                )}
-              </nav>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      
-      {/* Debug Info - يظهر فقط في وضع التطوير */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-0 left-0 bg-black/80 text-white text-xs p-1 z-50">
-          Session: {sessionStatus}, User: {userEmail || 'None'}
+            الرئيسية
+          </Link>
+          <Link 
+            href="/services" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/services') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'}`}
+            onClick={closeMenu}
+          >
+            خدماتنا
+          </Link>
+          <Link 
+            href="/about" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/about') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'}`}
+            onClick={closeMenu}
+          >
+            من نحن
+          </Link>
+          <Link 
+            href="/contact" 
+            className={`block px-3 py-2 rounded-md text-base font-medium ${isActive('/contact') ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50 hover:text-primary-600'}`}
+            onClick={closeMenu}
+          >
+            اتصل بنا
+          </Link>
         </div>
-      )}
+      </motion.div>
     </header>
   );
 };
 
-export default Navbar; 
+export default Navbar;
