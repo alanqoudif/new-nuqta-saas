@@ -1,40 +1,24 @@
-import type { Metadata } from "next";
-import { Tajawal } from "next/font/google";
-import "./globals.css";
-import ClientAuthProvider from "@/components/ClientAuthProvider";
-import { ThemeProvider } from "@/context/ThemeContext";
-import { ServicesProvider } from "@/context/ServicesContext";
-import { constructMetadata } from "./metadata";
+import './globals.css';
+import { Metadata } from 'next';
 
-const tajawal = Tajawal({
-  subsets: ["arabic"],
-  weight: ["400", "500", "700"],
-  variable: "--font-tajawal",
-});
-
-export const metadata: Metadata = constructMetadata();
+export const metadata: Metadata = {
+  title: 'نقطة للذكاء الاصطناعي - حلول متقدمة لتطوير أعمالك',
+  description: 'نقدم خدمات ذكاء اصطناعي متقدمة ومتكاملة تساعدك على تحسين أعمالك وزيادة إنتاجيتك',
+  icons: {
+    icon: '/favicon.ico',
+  },
+};
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="ar" dir="rtl" className="dark">
-      <head>
-        <link rel="icon" href="/nuqtalogo.webp" />
-        <link rel="apple-touch-icon" href="/nuqtalogo.webp" />
-        <meta name="theme-color" content="#111827" />
-      </head>
-      <body className={`${tajawal.className} bg-gray-950 text-gray-100 min-h-screen`}>
-        <ClientAuthProvider>
-          <ThemeProvider>
-            <ServicesProvider>
-              {children}
-            </ServicesProvider>
-          </ThemeProvider>
-        </ClientAuthProvider>
+    <html lang="ar" dir="rtl">
+      <body className="min-h-screen bg-gray-50 text-gray-900">
+        {children}
       </body>
     </html>
   );
-} 
+}
