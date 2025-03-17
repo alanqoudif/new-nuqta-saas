@@ -1,40 +1,54 @@
-"use client";
-
 import React from 'react';
-import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 interface CardProps {
   children: React.ReactNode;
+  title?: string;
+  icon?: React.ReactNode;
+  href?: string;
   className?: string;
   onClick?: () => void;
-  hover?: boolean;
-  gradient?: boolean;
-  glass?: boolean;
+  hoverEffect?: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
   children,
+  title,
+  icon,
+  href,
   className = '',
   onClick,
-  hover = true,
-  gradient = false,
-  glass = false,
+  hoverEffect = true
 }) => {
-  const baseClasses = 'rounded-xl shadow-xl overflow-hidden transition-all duration-300';
-  const hoverClasses = hover ? 'hover:shadow-2xl hover:scale-[1.02]' : '';
-  const gradientClasses = gradient ? 'border border-transparent bg-gradient-to-r from-primary-500/20 via-secondary-500/20 to-accent-500/20' : 'border border-gray-800';
-  const glassClasses = glass ? 'bg-gray-900/70 backdrop-blur-lg' : 'bg-gray-900';
-  
+  const cardContent = (
+    <>
+      {(icon || title) && (
+        <div className="flex items-center mb-4">
+          {icon && <div className="text-primary-600 text-xl mr-2">{icon}</div>}
+          {title && <h3 className="text-xl font-semibold">{title}</h3>}
+        </div>
+      )}
+      <div>{children}</div>
+    </>
+  );
+
+  const baseClasses = "bg-white rounded-xl shadow-md p-6";
+  const hoverClasses = hoverEffect ? "hover:shadow-lg transition-shadow transform hover:-translate-y-1 transition-transform duration-300" : "";
+  const classes = `${baseClasses} ${hoverClasses} ${className}`;
+
+  if (href) {
+    return (
+      <Link href={href} className={classes}>
+        {cardContent}
+      </Link>
+    );
+  }
+
   return (
-    <motion.div
-      className={`${baseClasses} ${hoverClasses} ${gradientClasses} ${glassClasses} ${className}`}
-      onClick={onClick}
-      whileHover={hover ? { scale: 1.02 } : {}}
-      transition={{ duration: 0.3 }}
-    >
-      {children}
-    </motion.div>
+    <div className={classes} onClick={onClick}>
+      {cardContent}
+    </div>
   );
 };
 
-export default Card; 
+export default Card;
