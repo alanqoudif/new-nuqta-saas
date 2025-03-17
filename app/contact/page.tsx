@@ -1,21 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FiMail, FiPhone, FiMapPin, FiSend } from 'react-icons/fi';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import Button from '@/components/ui/Button';
-
-// Animation variants
-const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.6 }
-  }
-};
+import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
+import { saveContactForm } from '@/utils/supabase';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -26,268 +14,288 @@ export default function ContactPage() {
     message: ''
   });
   
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitError('');
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
     
-    // Simulate form submission
-    try {
-      // In a real application, you would send the form data to your backend/API here
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSubmitSuccess(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+    if (!formData.name.trim()) newErrors.name = 'الاسم مطلوب';
+    if (!formData.email.trim()) newErrors.email = 'البريد الإلكتروني مطلوب';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'البريد الإلكتروني غير صالح';
+    }
+    if (!formData.message.trim()) newErrors.message = 'الرسالة مطلوبة';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Clear error when user types
+    if (errors[name]) {
+      setErrors(prev => {
+        const newErrors = { ...prev };
+        delete newErrors[name];
+        return newErrors;
       });
-    } catch (error) {
-      setSubmitError('حدث خطأ أثناء إرسال النموذج. يرجى المحاولة مرة أخرى.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
-  
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      const result = await saveContactForm(formData);
+      
+      if (result.success) {
+        setSubmitStatus('success');
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          subject: '',
+          message: ''
+        });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+      
+      // Reset status after 5 seconds
+      setTimeout(() => {
+        setSubmitStatus('idle');
+      }, 5000);
+    }
+  };
+
   return (
-    <main className="flex flex-col min-h-screen">
-      <Navbar />
-      
-      {/* Header Section */}
-      <section className="pt-32 pb-20 bg-gradient-to-r from-indigo-900 to-purple-900 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeIn}
+    <div className="bg-white min-h-screen" dir="rtl">
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <motion.h1 
+            className="text-4xl md:text-5xl font-bold text-gray-800 mb-4"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">اتصل بنا</h1>
-            <p className="text-xl text-gray-200 max-w-3xl mx-auto">
-              نحن هنا للإجابة على استفساراتك ومساعدتك في العثور على الحلول المناسبة لاحتياجاتك
-            </p>
+            تواصل معنا
+          </motion.h1>
+          <motion.p 
+            className="text-xl text-gray-600 max-w-2xl mx-auto"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            نحن هنا للإجابة على جميع استفساراتك. تواصل معنا وسنرد عليك في أقرب وقت ممكن.
+          </motion.p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.3 }}
+          >
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaEnvelope className="text-blue-600 text-2xl" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">البريد الإلكتروني</h3>
+            <p className="text-gray-600">info@nuqta.sa</p>
+            <p className="text-gray-600">support@nuqta.sa</p>
+          </motion.div>
+
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
+          >
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaPhone className="text-blue-600 text-2xl" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">رقم الهاتف</h3>
+            <p className="text-gray-600">+966 5XX XXX XXX</p>
+            <p className="text-gray-600">+966 5XX XXX XXX</p>
+          </motion.div>
+
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg p-8 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.5 }}
+          >
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <FaMapMarkerAlt className="text-blue-600 text-2xl" />
+            </div>
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">العنوان</h3>
+            <p className="text-gray-600">الرياض، المملكة العربية السعودية</p>
+            <p className="text-gray-600">شارع الرياض، حي السلام</p>
           </motion.div>
         </div>
-      </section>
-      
-      {/* Contact Info & Form Section */}
-      <section className="py-16 md:py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Contact Information */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeIn}
-            >
-              <h2 className="text-3xl font-bold mb-8 gradient-text">معلومات التواصل</h2>
-              
-              <div className="space-y-8">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 p-3 bg-primary-50 rounded-full">
-                    <FiMail className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="mr-4">
-                    <h3 className="text-xl font-semibold mb-1">البريد الإلكتروني</h3>
-                    <a href="mailto:info@nuqta.ai" className="text-gray-600 hover:text-primary-600 transition-colors">
-                      info@nuqta.ai
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 p-3 bg-primary-50 rounded-full">
-                    <FiPhone className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="mr-4">
-                    <h3 className="text-xl font-semibold mb-1">الهاتف</h3>
-                    <a href="tel:+9661234567890" className="text-gray-600 hover:text-primary-600 transition-colors">
-                      +966 12 345 6789
-                    </a>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <div className="flex-shrink-0 p-3 bg-primary-50 rounded-full">
-                    <FiMapPin className="h-6 w-6 text-primary-600" />
-                  </div>
-                  <div className="mr-4">
-                    <h3 className="text-xl font-semibold mb-1">العنوان</h3>
-                    <address className="not-italic text-gray-600">
-                      طريق الملك فهد، حي العليا<br />
-                      الرياض، المملكة العربية السعودية
-                    </address>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="mt-12">
-                <h3 className="text-xl font-semibold mb-4">ساعات العمل</h3>
-                <p className="text-gray-600 mb-2">الأحد - الخميس: 9:00 صباحاً - 5:00 مساءً</p>
-                <p className="text-gray-600">الجمعة - السبت: مغلق</p>
-              </div>
-            </motion.div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg p-8"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.6 }}
+          >
+            <h2 className="text-2xl font-bold text-gray-800 mb-6">أرسل لنا رسالة</h2>
             
-            {/* Contact Form */}
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeIn}
-            >
-              <h2 className="text-3xl font-bold mb-8 gradient-text">أرسل لنا رسالة</h2>
+            {submitStatus === 'success' && (
+              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                تم إرسال رسالتك بنجاح! سنتواصل معك قريبًا.
+              </div>
+            )}
+            
+            {submitStatus === 'error' && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                حدث خطأ أثناء إرسال الرسالة. يرجى المحاولة مرة أخرى.
+              </div>
+            )}
+            
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label htmlFor="name" className="block text-gray-700 font-medium mb-2">الاسم</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="الاسم الكامل"
+                />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+              </div>
               
-              {submitSuccess ? (
-                <div className="bg-green-50 border border-green-200 text-green-800 rounded-lg p-6 text-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-green-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <h3 className="text-xl font-semibold mb-2">تم إرسال رسالتك بنجاح!</h3>
-                  <p className="text-green-700">سنقوم بالرد عليك في أقرب وقت ممكن. شكراً لتواصلك معنا.</p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="name" className="block text-gray-700 font-medium mb-2">الاسم</label>
-                      <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-gray-700 font-medium mb-2">البريد الإلكتروني</label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        required
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">رقم الهاتف (اختياري)</label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                      />
-                    </div>
-                    <div>
-                      <label htmlFor="subject" className="block text-gray-700 font-medium mb-2">الموضوع</label>
-                      <select
-                        id="subject"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleChange}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                        required
-                      >
-                        <option value="">اختر موضوعاً</option>
-                        <option value="استفسار عام">استفسار عام</option>
-                        <option value="طلب عرض سعر">طلب عرض سعر</option>
-                        <option value="خدمة العملاء">خدمة العملاء</option>
-                        <option value="تقني">دعم تقني</option>
-                        <option value="أخرى">أخرى</option>
-                      </select>
-                    </div>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-gray-700 font-medium mb-2">الرسالة</label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
-                      rows={6}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                      required
-                    ></textarea>
-                  </div>
-                  
-                  {submitError && (
-                    <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-3">
-                      {submitError}
-                    </div>
-                  )}
-                  
-                  <div>
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      fullWidth
-                      size="lg"
-                      disabled={isSubmitting}
-                      icon={<FiSend />}
-                    >
-                      {isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة'}
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </motion.div>
-          </div>
-        </div>
-      </section>
-      
-      {/* Map Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeIn}
-            className="text-center mb-10"
-          >
-            <h2 className="text-3xl font-bold mb-4 gradient-text">موقعنا</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              يمكنك زيارتنا في مقر الشركة في الرياض للتحدث معنا شخصيًا
-            </p>
+              <div className="mb-4">
+                <label htmlFor="email" className="block text-gray-700 font-medium mb-2">البريد الإلكتروني</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.email ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="example@example.com"
+                />
+                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="phone" className="block text-gray-700 font-medium mb-2">رقم الهاتف (اختياري)</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="+966 XXXXXXXXX"
+                />
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="subject" className="block text-gray-700 font-medium mb-2">الموضوع (اختياري)</label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="موضوع الرسالة"
+                />
+              </div>
+              
+              <div className="mb-6">
+                <label htmlFor="message" className="block text-gray-700 font-medium mb-2">الرسالة</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={6}
+                  className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${errors.message ? 'border-red-500' : 'border-gray-300'}`}
+                  placeholder="اكتب رسالتك هنا..."
+                ></textarea>
+                {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
+              </div>
+              
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className={`bg-blue-600 text-white py-3 px-8 rounded-lg font-bold hover:bg-blue-700 transition duration-300 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
+              >
+                {isSubmitting ? 'جاري الإرسال...' : 'إرسال الرسالة'}
+              </button>
+            </form>
           </motion.div>
-          
-          <div className="rounded-xl overflow-hidden shadow-lg h-96 w-full">
-            {/* For simplicity, using an iframe for Google Maps - In a real app, consider using a proper Maps component */}
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.6859924805266!2d46.67121501576599!3d24.69022815489158!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sKing%20Fahd%20Rd%2C%20Riyadh%20Saudi%20Arabia!5e0!3m2!1sen!2sus!4v1629283381647!5m2!1sen!2sus"
-              width="100%"
-              height="100%"
-              style={{ border: 0 }}
-              loading="lazy"
-              title="موقع الشركة"
-            ></iframe>
-          </div>
+
+          <motion.div 
+            className="bg-white rounded-lg shadow-lg overflow-hidden"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.7 }}
+          >
+            <div className="p-8 bg-blue-50">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">ساعات العمل</h2>
+              
+              <div className="flex items-center mb-4">
+                <FaClock className="text-blue-600 text-xl ml-3" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">أيام الأسبوع</h3>
+                  <p className="text-gray-600">9:00 صباحًا - 5:00 مساءً</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center mb-4">
+                <FaClock className="text-blue-600 text-xl ml-3" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">الجمعة</h3>
+                  <p className="text-gray-600">مغلق</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center">
+                <FaClock className="text-blue-600 text-xl ml-3" />
+                <div>
+                  <h3 className="font-semibold text-gray-800">السبت</h3>
+                  <p className="text-gray-600">10:00 صباحًا - 2:00 مساءً</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="h-[400px] relative">
+              <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3624.8054214750295!2d46.74183141538532!3d24.693333584137446!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f02b5d857619f%3A0x99970465df8587b9!2sRiyadh!5e0!3m2!1sen!2ssa!4v1647434535764!5m2!1sen!2ssa" 
+                width="100%" 
+                height="100%" 
+                style={{ border: 0 }} 
+                allowFullScreen 
+                loading="lazy"
+                aria-hidden="false"
+                tabIndex={0}
+              ></iframe>
+            </div>
+          </motion.div>
         </div>
-      </section>
-      
-      <Footer />
-    </main>
+      </div>
+    </div>
   );
 }
