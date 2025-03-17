@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": ".next",
+  "ignoreCommand": "node -e \"process.exit(process.env.VERCEL_ENV !== 'production' ? 0 : 1)\"",
+  "github": {
+    "silent": true
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/admin/(.*)",
+      "status": 404,
+      "dest": "404.html"
+    }
+  ]
+}
