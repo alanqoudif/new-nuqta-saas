@@ -356,14 +356,18 @@ export default function AdminUsersPage() {
                             size="sm"
                             icon={<FiEdit className="text-gray-400" />}
                             className="hover:bg-gray-800"
-                          />
+                          >
+                            {/* تعديل */}
+                          </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             icon={<FiTrash className="text-red-500" />}
                             className="hover:bg-gray-800"
                             onClick={() => handleDeleteUser(user)}
-                          />
+                          >
+                            {/* حذف */}
+                          </Button>
                         </div>
                       </td>
                     </tr>
