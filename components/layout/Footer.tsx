@@ -1,240 +1,107 @@
-"use client";
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
-import { FiGithub, FiTwitter, FiLinkedin, FiMail, FiInstagram } from 'react-icons/fi';
-import { SocialMediaService, SocialMedia } from '@/lib/social-media-service';
-import * as FiIcons from 'react-icons/fi';
+import Image from 'next/image';
+import { FiMail, FiPhone, FiMapPin, FiTwitter, FiFacebook, FiInstagram, FiLinkedin } from 'react-icons/fi';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
-  const [socialLinks, setSocialLinks] = useState<SocialMedia[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  // تحميل روابط وسائل التواصل الاجتماعي من قاعدة البيانات
-  useEffect(() => {
-    const loadSocialMedia = async () => {
-      try {
-        console.log('Footer: Loading social media links...');
-        const activeSocialMedia = await SocialMediaService.getActiveSocialMedia();
-        
-        if (activeSocialMedia && activeSocialMedia.length > 0) {
-          console.log('Footer: Social media links loaded successfully:', activeSocialMedia);
-          setSocialLinks(activeSocialMedia);
-        } else {
-          console.log('Footer: No active social media links found, using default links');
-          // استخدام روابط افتراضية في حالة عدم وجود روابط في قاعدة البيانات
-          setSocialLinks([
-            { 
-              id: '1', 
-              platform: 'GitHub', 
-              url: 'https://github.com/nuqta-ai', 
-              icon_name: 'FiGithub', 
-              is_active: true, 
-              display_order: 1,
-              created_at: '',
-              updated_at: ''
-            },
-            { 
-              id: '2', 
-              platform: 'Twitter', 
-              url: 'https://twitter.com/nuqta_ai', 
-              icon_name: 'FiTwitter', 
-              is_active: true, 
-              display_order: 2,
-              created_at: '',
-              updated_at: ''
-            },
-            { 
-              id: '3', 
-              platform: 'LinkedIn', 
-              url: 'https://linkedin.com/company/nuqtai', 
-              icon_name: 'FiLinkedin', 
-              is_active: true, 
-              display_order: 3,
-              created_at: '',
-              updated_at: ''
-            },
-            { 
-              id: '4', 
-              platform: 'Email', 
-              url: 'mailto:info@nuqtai.com', 
-              icon_name: 'FiMail', 
-              is_active: true, 
-              display_order: 4,
-              created_at: '',
-              updated_at: ''
-            }
-          ]);
-        }
-      } catch (error) {
-        console.error('Footer: Error loading social media links:', error);
-        // استخدام روابط افتراضية في حالة حدوث خطأ
-        setSocialLinks([
-          { 
-            id: '1', 
-            platform: 'GitHub', 
-            url: 'https://github.com/nuqta-ai', 
-            icon_name: 'FiGithub', 
-            is_active: true, 
-            display_order: 1,
-            created_at: '',
-            updated_at: ''
-          },
-          { 
-            id: '2', 
-            platform: 'Twitter', 
-            url: 'https://twitter.com/nuqta_ai', 
-            icon_name: 'FiTwitter', 
-            is_active: true, 
-            display_order: 2,
-            created_at: '',
-            updated_at: ''
-          },
-          { 
-            id: '3', 
-            platform: 'LinkedIn', 
-            url: 'https://linkedin.com/company/nuqtai', 
-            icon_name: 'FiLinkedin', 
-            is_active: true, 
-            display_order: 3,
-            created_at: '',
-            updated_at: ''
-          },
-          { 
-            id: '4', 
-            platform: 'Email', 
-            url: 'mailto:info@nuqtai.com', 
-            icon_name: 'FiMail', 
-            is_active: true, 
-            display_order: 4,
-            created_at: '',
-            updated_at: ''
-          }
-        ]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSocialMedia();
-  }, []);
-
-  // الحصول على الأيقونة المناسبة من مكتبة react-icons/fi
-  const getIconComponent = (iconName: string) => {
-    const IconComponent = FiIcons[iconName as keyof typeof FiIcons];
-    
-    if (!IconComponent) {
-      console.warn(`Icon ${iconName} not found in react-icons/fi`);
-      return <FiMail />;
-    }
-    
-    return <IconComponent />;
-  };
-
-  const footerLinks = [
-    {
-      title: 'خدماتنا',
-      links: [
-        { name: 'الذكاء الاصطناعي الخاص', href: '/#privateai' },
-        { name: 'بناء المواقع بالذكاء الاصطناعي', href: '/#site-builder' },
-        { name: 'روبوت واتساب للدردشة', href: '/#whatsapp-chatbot' },
-      ],
-    },
-    {
-      title: 'الشركة',
-      links: [
-        { name: 'من نحن', href: '/#about' },
-        { name: 'اتصل بنا', href: '/#contact' },
-        { name: 'المدونة', href: '/blog' },
-      ],
-    },
-    {
-      title: 'قانوني',
-      links: [
-        { name: 'شروط الخدمة', href: '/terms' },
-        { name: 'سياسة الخصوصية', href: '/privacy' },
-        { name: 'ملفات تعريف الارتباط', href: '/cookies' },
-      ],
-    },
-  ];
 
   return (
-    <footer className="bg-gray-900 border-t border-gray-800">
-      <div className="container-custom py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
-          {/* Logo and Description */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-4">
-              <span className="text-2xl font-bold gradient-text">نقطة للذكاء الاصطناعي</span>
-            </Link>
-            <p className="text-gray-400 mb-4">
-              نحول المستقبل بحلول ذكاء اصطناعي سهلة الوصول وقوية للشركات والأفراد.
-            </p>
-            <div className="flex space-x-4">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.id}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-white transition-colors duration-300"
-                  aria-label={link.platform}
-                >
-                  {getIconComponent(link.icon_name)}
-                </a>
-              ))}
+    <footer className="bg-gray-900 text-white">
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Column 1: Logo and Brief */}
+          <div className="col-span-1 md:col-span-1">
+            <div className="relative h-12 w-48 mb-4">
+              <Image
+                src="https://raw.githubusercontent.com/alanqoudif/new-nuqta-saas/main/public/nuqta-logo-white.png"
+                alt="نقطة للذكاء الإصطناعي"
+                className="object-contain"
+                fill
+              />
             </div>
+            <p className="text-gray-400 text-sm mt-4">
+              نقدم حلول ذكاء اصطناعي متقدمة ومبتكرة لمساعدة الشركات والأفراد على تحسين إنتاجيتهم وتطوير أعمالهم.
+            </p>
           </div>
 
-          {/* Links */}
-          {footerLinks.map((section) => (
-            <div key={section.title}>
-              <h3 className="text-white font-medium mb-4">{section.title}</h3>
-              <ul className="space-y-2">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-gray-400 hover:text-white transition-colors duration-300"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          {/* Column 2: Quick Links */}
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">روابط سريعة</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  الرئيسية
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  خدماتنا
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  من نحن
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  اتصل بنا
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Contact */}
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">تواصل معنا</h3>
+            <ul className="space-y-3">
+              <li className="flex items-center gap-2">
+                <FiMail className="text-primary-500" />
+                <a href="mailto:info@nuqta.ai" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  info@nuqta.ai
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FiPhone className="text-primary-500" />
+                <a href="tel:+9661234567890" className="text-gray-400 hover:text-primary-500 transition-colors">
+                  +966 12 345 6789
+                </a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FiMapPin className="text-primary-500" />
+                <span className="text-gray-400">الرياض، المملكة العربية السعودية</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Social Media */}
+          <div className="col-span-1">
+            <h3 className="text-lg font-semibold mb-4">تابعنا</h3>
+            <div className="flex items-center space-x-4 space-x-reverse">
+              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <FiTwitter className="h-6 w-6" />
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <FiFacebook className="h-6 w-6" />
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <FiInstagram className="h-6 w-6" />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-primary-500 transition-colors">
+                <FiLinkedin className="h-6 w-6" />
+              </a>
             </div>
-          ))}
+          </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm mb-4 md:mb-0">
-            &copy; {currentYear} نقطة للذكاء الاصطناعي. جميع الحقوق محفوظة.
-          </p>
-          <div className="flex space-x-6">
-            <Link
-              href="/terms"
-              className="text-gray-500 hover:text-white text-sm transition-colors duration-300"
-            >
-              الشروط
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-gray-500 hover:text-white text-sm transition-colors duration-300"
-            >
-              الخصوصية
-            </Link>
-            <Link
-              href="/cookies"
-              className="text-gray-500 hover:text-white text-sm transition-colors duration-300"
-            >
-              ملفات تعريف الارتباط
-            </Link>
-          </div>
+        {/* Copyright */}
+        <div className="border-t border-gray-800 mt-10 pt-6 text-center text-gray-400 text-sm">
+          <p>جميع الحقوق محفوظة &copy; {currentYear} نقطة للذكاء الاصطناعي</p>
         </div>
       </div>
     </footer>
   );
 };
 
-export default Footer; 
+export default Footer;
